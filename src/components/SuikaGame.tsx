@@ -252,7 +252,7 @@ const SuikaGame: React.FC = () => {
       isNew: !isMerge,
       render: {
         sprite: {
-          texture: `/fruits/${type.imageFile}`,
+          texture: `${import.meta.env.BASE_URL}fruits/${type.imageFile}`,
           xScale: scaleFactor,
           yScale: scaleFactor
         }
@@ -300,7 +300,7 @@ const SuikaGame: React.FC = () => {
 
   return (
     <div className="relative flex flex-col items-center justify-start min-h-screen bg-[#FFF9E6] font-sans overflow-hidden pt-0">
-      <audio ref={bgmRef} src="/bgm.mp3" loop />
+      <audio ref={bgmRef} src={`${import.meta.env.BASE_URL}bgm.mp3`} loop />
       
       {/* 음소거 토글 버튼 (전체 화면 고정) */}
       <button 
@@ -324,7 +324,7 @@ const SuikaGame: React.FC = () => {
                 <div className="absolute -bottom-1 w-16 h-8 bg-white rounded-full" />
                 {isClickable && !isGameOver && (
                   <img 
-                    src={`/fruits/${FRUIT_TYPES[currentFruitIndex].imageFile}`}
+                    src={`${import.meta.env.BASE_URL}fruits/${FRUIT_TYPES[currentFruitIndex].imageFile}`}
                     className="relative z-10 drop-shadow-md"
                     style={{ 
                       width: Math.min(FRUIT_TYPES[currentFruitIndex].radius * 1.95, 48),
@@ -348,7 +348,7 @@ const SuikaGame: React.FC = () => {
           <div className="w-32 h-44 p-4 bg-white/80 rounded-3xl shadow-xl border-4 border-[#FFD700] flex flex-col items-center justify-between shrink-0">
             <div className="text-[#B38B00] font-bold text-sm">NEXT</div>
             <div className="flex-1 flex items-center justify-center pt-2">
-              <img src={`/fruits/${FRUIT_TYPES[nextFruitIndex].imageFile}`} className="drop-shadow-lg transition-all duration-300 transform scale-125"
+              <img src={`${import.meta.env.BASE_URL}fruits/${FRUIT_TYPES[nextFruitIndex].imageFile}`} className="drop-shadow-lg transition-all duration-300 transform scale-125"
                 style={{ width: Math.max(30, FRUIT_TYPES[nextFruitIndex].radius * 1.8), height: 'auto', objectFit: 'contain' }} alt="next" />
             </div>
             <div className="text-xs font-bold text-gray-500">{FRUIT_TYPES[nextFruitIndex].name}</div>
@@ -358,7 +358,7 @@ const SuikaGame: React.FC = () => {
             <div className="relative w-36 h-36 flex items-center justify-center">
               {FRUIT_TYPES.map((fruit, i) => {
                 const angle = (i / FRUIT_TYPES.length) * Math.PI * 2 - Math.PI / 2;
-                return <img key={i} src={`/fruits/${fruit.imageFile}`} className="absolute drop-shadow"
+                return <img key={i} src={`${import.meta.env.BASE_URL}fruits/${fruit.imageFile}`} className="absolute drop-shadow"
                     style={{ width: 14 + i * 2, height: 'auto', transform: `translate(${Math.cos(angle) * 55}px, ${Math.sin(angle) * 55}px)` }} alt={fruit.name} />;
               })}
             </div>
