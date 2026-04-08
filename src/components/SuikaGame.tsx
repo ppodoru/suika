@@ -468,14 +468,7 @@ const SuikaGame: React.FC = () => {
   return (
     <div className="relative flex flex-col items-center justify-start min-h-screen bg-[#FFF9E6] font-sans overflow-hidden pt-0">
       
-      {/* 음소거 토글 버튼 (전체 화면 고정) */}
-      <button 
-        onClick={(e) => { e.stopPropagation(); setIsMuted(prev => !prev); }}
-        className="fixed top-6 right-6 z-50 p-4 text-3xl bg-white/90 backdrop-blur-sm rounded-full shadow-lg border-2 border-[#b2ebf2] hover:bg-white hover:scale-110 transition-all cursor-pointer flex items-center justify-center"
-        title="음소거 토글"
-      >
-        {isMuted ? '🔇' : '🔊'}
-      </button>
+      {/* 음소거 버튼이 진화의 고리 내부로 이동되었습니다. */}
 
       <div className="relative flex flex-col lg:flex-row gap-4 lg:gap-8 items-center lg:items-start z-10 p-0 transform -translate-y-2">
         <div style={{ width: 500 * scale, height: 650 * scale }} className="relative shrink-0">
@@ -529,13 +522,21 @@ const SuikaGame: React.FC = () => {
             </div>
             <div className="text-xs font-bold text-gray-500">{FRUIT_TYPES[nextFruitIndex].name}</div>
           </div>
-          <div className="w-48 p-4 bg-white/80 rounded-3xl shadow-xl border-4 border-[#87CEEB] flex flex-col items-center">
-            <div className="text-[#4682B4] font-bold mb-4">진화의 고리</div>
-            <div className="relative w-36 h-36 flex items-center justify-center">
+          <div className="w-40 p-3 bg-white/80 rounded-3xl shadow-xl border-4 border-[#87CEEB] flex flex-col items-center shrink-0">
+            <div className="text-[#4682B4] font-bold mb-3 text-sm">진화의 고리</div>
+            <div className="relative w-32 h-32 flex items-center justify-center">
+              {/* 고리 중앙에 배치된 음소거 버튼 */}
+              <button 
+                onClick={(e) => { e.stopPropagation(); setIsMuted(prev => !prev); }}
+                className="z-20 w-12 h-12 bg-white/90 rounded-full shadow-md border-2 border-[#b2ebf2] hover:bg-[#e0f7fa] transition-all flex items-center justify-center text-xl cursor-pointer"
+                title="음소거 토글"
+              >
+                {isMuted ? '🔇' : '🔊'}
+              </button>
               {FRUIT_TYPES.map((fruit, i) => {
                 const angle = (i / FRUIT_TYPES.length) * Math.PI * 2 - Math.PI / 2;
                 return <img key={i} src={`${import.meta.env.BASE_URL}fruits/${fruit.imageFile}`} className="absolute drop-shadow"
-                    style={{ width: (14 + i * 2) * scale, height: 'auto', transform: `translate(${Math.cos(angle) * 55 * scale}px, ${Math.sin(angle) * 55 * scale}px)` }} alt={fruit.name} />;
+                    style={{ width: (12 + i * 1.8) * scale, height: 'auto', transform: `translate(${Math.cos(angle) * 48 * scale}px, ${Math.sin(angle) * 48 * scale}px)` }} alt={fruit.name} />;
               })}
             </div>
           </div>
