@@ -15,14 +15,14 @@ interface FruitData {
 
 const FRUIT_TYPES: FruitData[] = [
   { id: 1, name: '체리', radius: 15, color: '#FF3333', borderColor: '#CC0000', imageFile: '1_cherry.png?v=2', imgW: 513, imgH: 684 },
-  { id: 2, name: '딸기', radius: 22, color: '#FF5E7E', borderColor: '#D94361', isCustomShape: true, imageFile: '2_strawberry.png?v=2', imgW: 504, imgH: 618 },
-  { id: 3, name: '포도', radius: 32, color: '#A066FF', borderColor: '#7A49D1', isCustomShape: true, imageFile: '3_grape.png?v=2', imgW: 570, imgH: 794 },
+  { id: 2, name: '딸기', radius: 22, color: '#FF5E7E', borderColor: '#D94361', imageFile: '2_strawberry.png?v=2', imgW: 504, imgH: 618 },
+  { id: 3, name: '포도', radius: 32, color: '#A066FF', borderColor: '#7A49D1', imageFile: '3_grape.png?v=2', imgW: 570, imgH: 794 },
   { id: 4, name: '귤', radius: 38, color: '#FFCC00', borderColor: '#E6B800', imageFile: '4_tangerine_v3.png', imgW: 638, imgH: 720 },
   { id: 5, name: '감', radius: 48, color: '#FF8533', borderColor: '#D9651A', imageFile: '5_persimmon.png?v=2', imgW: 658, imgH: 659 },
   { id: 6, name: '사과', radius: 58, color: '#FF4D4D', borderColor: '#CC3333', imageFile: '6_apple.png?v=2', imgW: 560, imgH: 628 },
-  { id: 7, name: '배', radius: 68, color: '#FFE162', borderColor: '#D9BC41', isCustomShape: true, imageFile: '7_pear.png?v=2', imgW: 620, imgH: 769 },
+  { id: 7, name: '배', radius: 68, color: '#FFE162', borderColor: '#D9BC41', imageFile: '7_pear.png?v=2', imgW: 620, imgH: 769 },
   { id: 8, name: '복숭아', radius: 82, color: '#FFADAD', borderColor: '#D98A8A', imageFile: '8_peach.png?v=2', imgW: 530, imgH: 594 },
-  { id: 9, name: '파인애플', radius: 98, color: '#FFEC33', borderColor: '#D9C81A', isCustomShape: true, imageFile: '9_pineapple.png?v=2', imgW: 456, imgH: 718 },
+  { id: 9, name: '파인애플', radius: 98, color: '#FFEC33', borderColor: '#D9C81A', imageFile: '9_pineapple_round.png', imgW: 612, imgH: 789 },
   { id: 10, name: '멜론', radius: 118, color: '#B2FF66', borderColor: '#8ACC4D', imageFile: '10_melon.png?v=2', imgW: 592, imgH: 690 },
   { id: 11, name: '수박', radius: 140, color: '#2DB400', borderColor: '#248F00', imageFile: '11_watermelon.png?v=2', imgW: 586, imgH: 681 },
 ];
@@ -147,6 +147,9 @@ const SuikaGame: React.FC = () => {
     const engine = Matter.Engine.create();
     engineRef.current = engine;
     engine.gravity.y = 1.2;
+    // 과일이 바닥/벽을 뚫고 나가지 않도록 엔진 충돌 정밀도 대폭 향상
+    engine.positionIterations = 20;
+    engine.velocityIterations = 20;
 
     const render = Matter.Render.create({
       element: sceneRef.current,
@@ -182,7 +185,8 @@ const SuikaGame: React.FC = () => {
     const centerY = 370;
 
     // 📦 투명 직사각형 상자 물리 구조 구축 (원작 고증)
-    const wallThickness = 40;
+    // 뚫림 방지를 위해 두께를 강력하게 150으로 설정 (내부 공간 넓이는 유지됨)
+    const wallThickness = 150;
     const potWalls = [
       // 하단 베이스 (평평한 바닥)
       Matter.Bodies.rectangle(centerX, centerY + containerHeight/2 + wallThickness/2, containerWidth + wallThickness * 2, wallThickness, {
