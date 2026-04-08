@@ -223,14 +223,13 @@ const SuikaGame: React.FC = () => {
       render: { fillStyle: '#FFFFFF55', strokeStyle: '#B2EBF2', lineWidth: 4 }
     };
 
-    const containerWidth = 380;
+    const containerWidth = 440; // 수박 두 개(지름 220x2)가 들어갈 수 있도록 440으로 확장
     const containerHeight = 550;
     const centerX = 250;
     const centerY = 370;
 
     // 📦 투명 직사각형 상자 물리 구조 구축 (원작 고증)
-    // 뚫림 방지를 위해 두께를 강력하게 150으로 설정 (내부 공간 넓이는 유지됨)
-    const wallThickness = 150;
+    const wallThickness = 20; // 사용자의 요청에 따라 벽을 얇게 변경
     const potWalls = [
       // 하단 베이스 (평평한 바닥)
       Matter.Bodies.rectangle(centerX, centerY + containerHeight/2 + wallThickness/2, containerWidth + wallThickness * 2, wallThickness, {
@@ -534,11 +533,11 @@ const SuikaGame: React.FC = () => {
       } else {
         clientX = (e as React.MouseEvent).clientX;
       }
-      // 벽 안쪽 경계: 좌 60, 우 440 (containerWidth=380, centerX=250 기준)
+      // 벽 안쪽 경계: 좌 30, 우 470 (containerWidth=440, centerX=250 기준)
       // 현재 과일 반지름만큼 안쪽으로 제한해 벽에 닿지 않도록 함
       const radius = FRUIT_TYPES[currentFruitIndex].radius;
-      const minX = 60 + radius;
-      const maxX = 440 - radius;
+      const minX = 30 + radius;
+      const maxX = 470 - radius;
       setCloudX(Math.max(minX, Math.min(maxX, (clientX - rect.left) / scale)));
     }
   };
@@ -558,7 +557,7 @@ const SuikaGame: React.FC = () => {
       
       // 새 과일의 크기가 기존보다 클 수 있으므로 위치를 즉시 안전한 범위로 자동 이동
       const newRadius = FRUIT_TYPES[nextFruitIndex].radius;
-      setCloudX(prevX => Math.max(60 + newRadius, Math.min(440 - newRadius, prevX)));
+      setCloudX(prevX => Math.max(30 + newRadius, Math.min(470 - newRadius, prevX)));
       
       setNextFruitIndex(Math.floor(Math.random() * 5));
       setIsClickable(true);
@@ -626,7 +625,7 @@ const SuikaGame: React.FC = () => {
                 )}
               </div>
               
-              <div className="absolute top-[110px] left-[70px] right-[70px] h-0.5 border-t-2 border-dashed border-red-400 opacity-50 pointer-events-none z-40" />
+              <div className="absolute top-[110px] left-[30px] right-[30px] h-0.5 border-t-2 border-dashed border-red-400 opacity-50 pointer-events-none z-40" />
             </div>
         </div>
         </div>
