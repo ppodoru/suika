@@ -36,6 +36,7 @@ const SuikaGame: React.FC = () => {
   const [cloudX, setCloudX] = useState(250);
   const [isClickable, setIsClickable] = useState(true);
   const [isGameOver, setIsGameOver] = useState(false);
+  const [highScore, setHighScore] = useState(0);
   const [scale, setScale] = useState(1);
   const gameOverTimerRef = useRef<number | null>(null);
   const [bgmStarted, setBgmStarted] = useState(false);
@@ -141,6 +142,24 @@ const SuikaGame: React.FC = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // 하이스코어 불러오기
+  useEffect(() => {
+    const saved = localStorage.getItem('suika-high-score');
+    if (saved) {
+      setHighScore(parseInt(saved));
+    }
+  }, []);
+
+  // 게임 오버 시 하이스코어 저장
+  useEffect(() => {
+    if (isGameOver) {
+      if (score > highScore) {
+        setHighScore(score);
+        localStorage.setItem('suika-high-score', score.toString());
+      }
+    }
+  }, [isGameOver, score, highScore]);
 
   useEffect(() => {
     const handleTouchMove = (e: TouchEvent) => {
@@ -572,8 +591,13 @@ const SuikaGame: React.FC = () => {
       <div ref={containerRef} className={`relative flex flex-col lg:flex-row gap-4 lg:gap-8 items-center lg:items-start z-10 p-0 transform -translate-y-2 ${isShake ? 'animate-shake' : ''}`}>
         <div style={{ width: 500 * scale, height: 650 * scale }} className="relative shrink-0">
           <div style={{ transform: `scale(${scale})`, transformOrigin: 'top left', width: 500, height: 650 }} className="absolute top-0 left-0 bg-white/10 rounded-b-[40px]">
-            <div className="absolute top-4 left-4 px-4 py-1 bg-[#FF8080] text-white rounded-full shadow-lg border-2 border-white font-bold text-lg z-0 whitespace-nowrap">
-              SCORE: {score}
+            <div className="absolute top-4 left-4 flex gap-2 z-0">
+              <div className="px-4 py-1 bg-[#FF8080] text-white rounded-full shadow-lg border-2 border-white font-bold text-lg whitespace-nowrap">
+                SCORE: {score}
+              </div>
+              <div className="px-4 py-1 bg-[#FFB84D] text-white rounded-full shadow-lg border-2 border-white font-bold text-lg whitespace-nowrap">
+                BEST: {highScore}
+              </div>
             </div>
             {/* 이벤트 처리용 최상위 컨테이너 */}
             <div onMouseMove={handleMove} onTouchMove={handleMove} onTouchStart={handleMove} onTouchEnd={handleClick} onClick={handleClick} style={{ touchAction: 'none' }} className="relative w-[500px] h-[650px] cursor-none">
