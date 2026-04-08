@@ -139,6 +139,23 @@ const SuikaGame: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  useEffect(() => {
+    const handleTouchMove = (e: TouchEvent) => {
+      // 폼 요소 등을 제외하고는 기본 스크롤 동작을 완전히 무시하도록 설정
+      if (e.target instanceof HTMLElement && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
+        return;
+      }
+      e.preventDefault();
+    };
+
+    // iOS Safari 등에서 스크롤을 막기 위해 passive: false 설정 필수
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    
+    return () => {
+      document.removeEventListener('touchmove', handleTouchMove);
+    };
+  }, []);
+
   const DEADLINE_Y = 110;
 
   useEffect(() => {
