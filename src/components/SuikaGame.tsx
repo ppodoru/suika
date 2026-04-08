@@ -508,7 +508,7 @@ const SuikaGame: React.FC = () => {
             <div className="text-[#B38B00] font-bold text-sm">NEXT</div>
             <div className="flex-1 flex items-center justify-center pt-2">
               <img src={`${import.meta.env.BASE_URL}fruits/${FRUIT_TYPES[nextFruitIndex].imageFile}`} className="drop-shadow-lg transition-all duration-300"
-                style={{ width: FRUIT_TYPES[nextFruitIndex].radius * 1.95, height: 'auto', objectFit: 'contain' }} alt="next" />
+                style={{ width: FRUIT_TYPES[nextFruitIndex].radius * 1.95 * scale, height: 'auto', objectFit: 'contain' }} alt="next" />
             </div>
             <div className="text-xs font-bold text-gray-500">{FRUIT_TYPES[nextFruitIndex].name}</div>
           </div>
@@ -518,7 +518,7 @@ const SuikaGame: React.FC = () => {
               {FRUIT_TYPES.map((fruit, i) => {
                 const angle = (i / FRUIT_TYPES.length) * Math.PI * 2 - Math.PI / 2;
                 return <img key={i} src={`${import.meta.env.BASE_URL}fruits/${fruit.imageFile}`} className="absolute drop-shadow"
-                    style={{ width: 14 + i * 2, height: 'auto', transform: `translate(${Math.cos(angle) * 55}px, ${Math.sin(angle) * 55}px)` }} alt={fruit.name} />;
+                    style={{ width: (14 + i * 2) * scale, height: 'auto', transform: `translate(${Math.cos(angle) * 55 * scale}px, ${Math.sin(angle) * 55 * scale}px)` }} alt={fruit.name} />;
               })}
             </div>
           </div>
