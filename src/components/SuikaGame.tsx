@@ -502,7 +502,7 @@ const SuikaGame: React.FC = () => {
               {/* 낙하 가이드 점선 (z-[15]) */}
               {isClickable && !isGameOver && (
                 <div 
-                  className="absolute top-[40px] bottom-[100px] border-l-2 border-dashed border-gray-400/60 pointer-events-none z-[15]"
+                  className="absolute top-[40px] bottom-[5px] border-l-2 border-dashed border-gray-400/60 pointer-events-none z-[15]"
                   style={{ left: `${cloudX}px` }}
                 />
               )}
