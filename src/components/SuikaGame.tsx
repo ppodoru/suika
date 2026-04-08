@@ -579,16 +579,10 @@ const SuikaGame: React.FC = () => {
             {/* 이벤트 처리용 최상위 컨테이너 */}
             <div onMouseMove={handleMove} onTouchMove={handleMove} onTouchStart={handleMove} onTouchEnd={handleClick} onClick={handleClick} style={{ touchAction: 'none' }} className="relative w-[500px] h-[650px] cursor-none">
               
-              {/* 수박 합치기 부유 텍스트 */}
+              {/* 수박 합치기 부유 텍스트 (화면 정중앙 고정) */}
               {suikaPop && (
                 <div 
-                  className="absolute pointer-events-none z-50 text-white font-black text-4xl animate-bounce whitespace-nowrap drop-shadow-[0_4px_10px_rgba(255,0,0,0.8)]"
-                  style={{ 
-                    left: `${suikaPop.x}px`, 
-                    top: `${suikaPop.y}px`,
-                    transform: 'translate(-50%, -100%)',
-                    transition: 'all 1.5s ease-out'
-                  }}
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-50 text-white font-black text-6xl lg:text-7xl animate-bounce whitespace-nowrap drop-shadow-[0_0_30px_rgba(255,0,0,1)] uppercase"
                 >
                   🍉 SUIKA!! 🍉
                 </div>
