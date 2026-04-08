@@ -380,9 +380,14 @@ const SuikaGame: React.FC = () => {
 
     // 병합 로직 + 착지 효과음
     Matter.Events.on(engine, 'collisionStart', (event) => {
+      const mergedIds = new Set<number>(); // 이번 프레임에서 이미 합쳐진 과일 ID 추적
+
       event.pairs.forEach((pair) => {
         const bodyA = pair.bodyA;
         const bodyB = pair.bodyB;
+
+        // 이미 다른 과일과 합쳐진 몸체라면 이 쌍은 무시 (3개 동시 충돌 방지)
+        if (mergedIds.has(bodyA.id) || mergedIds.has(bodyB.id)) return;
 
         if (bodyA.label.startsWith('fruit_')) (bodyA as any).isNew = false;
         if (bodyB.label.startsWith('fruit_')) (bodyB as any).isNew = false;
@@ -391,6 +396,10 @@ const SuikaGame: React.FC = () => {
         if (bodyA.label === bodyB.label && bodyA.label.startsWith('fruit_')) {
           const typeNum = parseInt(bodyA.label.split('_')[1]); // fruit_1 -> 1
           const typeIndex = typeNum - 1; // fruit_1 -> index 0
+
+          // 합쳐질 과일 ID 등록
+          mergedIds.add(bodyA.id);
+          mergedIds.add(bodyB.id);
           
           // 점수 체계: 원래 설계 문서 기준 (1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66)
           const points = [1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66];
