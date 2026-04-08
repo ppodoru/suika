@@ -156,6 +156,22 @@ const SuikaGame: React.FC = () => {
     };
   }, []);
 
+  // 개발자 테스트 모드: 키보드 단축키로 과일 즉시 변경
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const key = e.key.toLowerCase();
+      if (key >= '1' && key <= '9') {
+        setCurrentFruitIndex(parseInt(key) - 1);
+      } else if (key === '0') {
+        setCurrentFruitIndex(9); // 멜론
+      } else if (key === 'w') {
+        setCurrentFruitIndex(10); // 수박
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   const runnerRef = useRef<Matter.Runner | null>(null);
 
   useEffect(() => {
@@ -323,15 +339,22 @@ const SuikaGame: React.FC = () => {
 
         // 과일 합치기
         if (bodyA.label === bodyB.label && bodyA.label.startsWith('fruit_')) {
-          const typeIndex = parseInt(bodyA.label.split('_')[1]);
-          const points = [0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66];
-          setScore(prev => prev + points[typeIndex]);
+          const typeNum = parseInt(bodyA.label.split('_')[1]); // fruit_1 -> 1
+          const typeIndex = typeNum - 1; // fruit_1 -> index 0
+          
+          // 점수 체계: 과일이 클수록 기하급수적으로 증가 (수박 합치기는 1000점!)
+          const points = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1000];
+          setScore(prev => prev + (points[typeIndex] || 0));
           
           playMergeSound(typeIndex);
           
+          if (typeNum === 11) {
+            console.log('%c🍉 SUIKA MERGE SUCCESS!!! 🍉', 'color: #ff0000; font-size: 20px; font-weight: bold;');
+          }
+
           Matter.Composite.remove(engine.world, [bodyA, bodyB]);
-          if (typeIndex < 11) {
-            createFruit((bodyA.position.x + bodyB.position.x) / 2, (bodyA.position.y + bodyB.position.y) / 2, typeIndex, engine.world, true);
+          if (typeNum < 11) {
+            createFruit((bodyA.position.x + bodyB.position.x) / 2, (bodyA.position.y + bodyB.position.y) / 2, typeNum, engine.world, true);
           }
           return;
         }
