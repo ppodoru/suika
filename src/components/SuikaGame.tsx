@@ -237,7 +237,7 @@ const SuikaGame: React.FC = () => {
 
     const glassOptions = {
       isStatic: true,
-      friction: 0.1,
+      friction: 0.01,
       restitution: 0.2,
       render: { fillStyle: '#FFFFFF55', strokeStyle: '#B2EBF2', lineWidth: 4 }
     };
@@ -253,7 +253,7 @@ const SuikaGame: React.FC = () => {
       // 하단 베이스 (평평한 바닥)
       Matter.Bodies.rectangle(centerX, centerY + containerHeight/2 + wallThickness/2, containerWidth + wallThickness * 2, wallThickness, {
         isStatic: true,
-        friction: 0.5,
+        friction: 0.05,
         render: { fillStyle: '#FFE4B5', strokeStyle: '#DEB887', lineWidth: 4 }, // 우드/베이지 톤
         label: 'wall'
       }),
@@ -523,7 +523,9 @@ const SuikaGame: React.FC = () => {
     const options: any = {
       label: `fruit_${index + 1}`,
       restitution: 0.3,
-      friction: 0.05,
+      friction: 0.001,
+      frictionStatic: 0,
+      frictionAir: 0,
       mass: 1,
       isNew: !isMerge,
       render: {
@@ -534,9 +536,7 @@ const SuikaGame: React.FC = () => {
         }
       }
     };
-    const fruit = type.isCustomShape
-      ? Matter.Bodies.polygon(x, y, index === 1 ? 6 : 8, type.radius, options)
-      : Matter.Bodies.circle(x, y, type.radius, options);
+    const fruit = Matter.Bodies.circle(x, y, type.radius, options);
     if (isMerge) Matter.Body.applyForce(fruit, fruit.position, { x: 0, y: -0.01 });
     Matter.Composite.add(world, fruit);
     return fruit;
