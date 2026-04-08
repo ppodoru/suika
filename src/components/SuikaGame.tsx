@@ -41,6 +41,9 @@ const SuikaGame: React.FC = () => {
   const [bgmStarted, setBgmStarted] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [isGameStarted, setIsGameStarted] = useState(false);
+  const [isShake, setIsShake] = useState(false);
+  const [suikaPop, setSuikaPop] = useState<{ x: number, y: number } | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const bgmBufferRef = useRef<AudioBuffer | null>(null);
   const bgmSourceRef = useRef<AudioBufferSourceNode | null>(null);
@@ -328,6 +331,33 @@ const SuikaGame: React.FC = () => {
       }
     };
 
+    // 수박 합치기 전용 웅장한 사운드
+    const playSuikaSpecialSound = () => {
+      try {
+        const audioCtx = getAudioCtx();
+        if (!audioCtx) return;
+        
+        // 여러 주파수의 조화 (C-Major Chord 느낌)
+        [261.63, 329.63, 392.00, 523.25].forEach((freq, i) => {
+          const osc = audioCtx.createOscillator();
+          const gainNode = audioCtx.createGain();
+          osc.type = i % 2 === 0 ? 'sine' : 'triangle';
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(freq * 0.5, audioCtx.currentTime + 1.5);
+          
+          gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.2);
+          
+          osc.connect(gainNode);
+          gainNode.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 1.5);
+        });
+      } catch (e) {
+        console.error('Suika sound failed', e);
+      }
+    };
+
     // 병합 로직 + 착지 효과음
     Matter.Events.on(engine, 'collisionStart', (event) => {
       event.pairs.forEach((pair) => {
@@ -350,6 +380,44 @@ const SuikaGame: React.FC = () => {
           
           if (typeNum === 11) {
             console.log('%c🍉 SUIKA MERGE SUCCESS!!! 🍉', 'color: #ff0000; font-size: 20px; font-weight: bold;');
+            playSuikaSpecialSound();
+            
+            // 화면 진동 트리거
+            setIsShake(true);
+            setTimeout(() => setIsShake(false), 400);
+
+            // 부유 텍스트 위치 설정
+            setSuikaPop({ x: bodyA.position.x, y: bodyA.position.y });
+            setTimeout(() => setSuikaPop(null), 1500);
+
+            // 수박 씨 파티클 버스트 (Matter.js)
+            const particles: Matter.Body[] = [];
+            for (let i = 0; i < 20; i++) {
+              const p = Matter.Bodies.circle(
+                (bodyA.position.x + bodyB.position.x) / 2,
+                (bodyA.position.y + bodyB.position.y) / 2,
+                Math.random() * 3 + 2,
+                {
+                  friction: 0.1,
+                  restitution: 0.8,
+                  label: 'particle',
+                  collisionFilter: { group: -1, mask: 0 }, // 다른 물체와 충돌 안함
+                  render: { fillStyle: '#331100' } // 수박 씨 색상
+                }
+              );
+              const forceMagnitude = 0.01 * p.mass;
+              const angle = Math.random() * Math.PI * 2;
+              Matter.Body.applyForce(p, p.position, {
+                x: Math.cos(angle) * forceMagnitude,
+                y: Math.sin(angle) * forceMagnitude
+              });
+              particles.push(p);
+            }
+            Matter.Composite.add(engine.world, particles);
+            // 2초 뒤 파티클 제거
+            setTimeout(() => {
+              Matter.Composite.remove(engine.world, particles);
+            }, 2000);
           }
 
           Matter.Composite.remove(engine.world, [bodyA, bodyB]);
@@ -502,7 +570,7 @@ const SuikaGame: React.FC = () => {
       
       {/* 음소거 버튼이 진화의 고리 내부로 이동되었습니다. */}
 
-      <div className="relative flex flex-col lg:flex-row gap-4 lg:gap-8 items-center lg:items-start z-10 p-0 transform -translate-y-2">
+      <div ref={containerRef} className={`relative flex flex-col lg:flex-row gap-4 lg:gap-8 items-center lg:items-start z-10 p-0 transform -translate-y-2 ${isShake ? 'animate-shake' : ''}`}>
         <div style={{ width: 500 * scale, height: 650 * scale }} className="relative shrink-0">
           <div style={{ transform: `scale(${scale})`, transformOrigin: 'top left', width: 500, height: 650 }} className="absolute top-0 left-0 bg-white/10 rounded-b-[40px]">
             <div className="absolute top-4 left-4 px-4 py-1 bg-[#FF8080] text-white rounded-full shadow-lg border-2 border-white font-bold text-lg z-0 whitespace-nowrap">
@@ -510,6 +578,21 @@ const SuikaGame: React.FC = () => {
             </div>
             {/* 이벤트 처리용 최상위 컨테이너 */}
             <div onMouseMove={handleMove} onTouchMove={handleMove} onTouchStart={handleMove} onTouchEnd={handleClick} onClick={handleClick} style={{ touchAction: 'none' }} className="relative w-[500px] h-[650px] cursor-none">
+              
+              {/* 수박 합치기 부유 텍스트 */}
+              {suikaPop && (
+                <div 
+                  className="absolute pointer-events-none z-50 text-white font-black text-4xl animate-bounce whitespace-nowrap drop-shadow-[0_4px_10px_rgba(255,0,0,0.8)]"
+                  style={{ 
+                    left: `${suikaPop.x}px`, 
+                    top: `${suikaPop.y}px`,
+                    transform: 'translate(-50%, -100%)',
+                    transition: 'all 1.5s ease-out'
+                  }}
+                >
+                  🍉 SUIKA!! 🍉
+                </div>
+              )}
               
               {/* 1. 구름 몸체 (z-10: 가장 뒤) */}
               <div className="absolute top-0 pointer-events-none z-10" style={{ left: `${cloudX}px` }}>
