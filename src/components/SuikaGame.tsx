@@ -156,6 +156,14 @@ const SuikaGame: React.FC = () => {
     };
   }, []);
 
+  const runnerRef = useRef<Matter.Runner | null>(null);
+
+  useEffect(() => {
+    if (isGameOver && runnerRef.current) {
+      Matter.Runner.stop(runnerRef.current);
+    }
+  }, [isGameOver]);
+
   const DEADLINE_Y = 110;
 
   useEffect(() => {
@@ -382,6 +390,7 @@ const SuikaGame: React.FC = () => {
 
     Matter.Render.run(render);
     const runner = Matter.Runner.create();
+    runnerRef.current = runner;
     Matter.Runner.run(runner, engine);
 
     return () => {
@@ -393,7 +402,7 @@ const SuikaGame: React.FC = () => {
       Matter.Runner.stop(runner);
       render.canvas.remove();
     };
-  }, [isGameOver]);
+  }, []);
 
   const createFruit = (x: number, y: number, index: number, world: Matter.World, isMerge = false) => {
     const type = FRUIT_TYPES[index];
