@@ -522,7 +522,7 @@ const SuikaGame: React.FC = () => {
             </div>
             <div className="text-xs font-bold text-gray-500">{FRUIT_TYPES[nextFruitIndex].name}</div>
           </div>
-          <div className="w-40 p-3 bg-white/80 rounded-3xl shadow-xl border-4 border-[#87CEEB] flex flex-col items-center shrink-0">
+          <div className="w-40 h-44 p-3 bg-white/80 rounded-3xl shadow-xl border-4 border-[#87CEEB] flex flex-col items-center shrink-0">
             <div className="text-[#4682B4] font-bold mb-3 text-sm">진화의 고리</div>
             <div className="relative w-32 h-32 flex items-center justify-center">
               {/* 고리 중앙에 배치된 음소거 버튼 */}
