@@ -372,8 +372,8 @@ const SuikaGame: React.FC = () => {
           const typeNum = parseInt(bodyA.label.split('_')[1]); // fruit_1 -> 1
           const typeIndex = typeNum - 1; // fruit_1 -> index 0
           
-          // 점수 체계: 과일이 클수록 기하급수적으로 증가 (수박 합치기는 1000점!)
-          const points = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1000];
+          // 점수 체계: 원래 설계 문서 기준 (1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66)
+          const points = [1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66];
           setScore(prev => prev + (points[typeIndex] || 0));
           
           playMergeSound(typeIndex);
