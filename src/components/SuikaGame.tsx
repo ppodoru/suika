@@ -15,16 +15,16 @@ interface FruitData {
 
 const FRUIT_TYPES: FruitData[] = [
   { id: 1, name: '체리', radius: 14, color: '#FF3333', borderColor: '#CC0000', imageFile: '1_cherry.png?v=2', imgW: 513, imgH: 684 },
-  { id: 2, name: '딸기', radius: 21, color: '#FF5E7E', borderColor: '#D94361', imageFile: '2_strawberry.png?v=2', imgW: 504, imgH: 618 },
-  { id: 3, name: '포도', radius: 29, color: '#A066FF', borderColor: '#7A49D1', imageFile: '3_grape.png?v=2', imgW: 570, imgH: 794 },
-  { id: 4, name: '귤', radius: 36, color: '#FFCC00', borderColor: '#E6B800', imageFile: '4_tangerine_v3.png', imgW: 638, imgH: 720 },
-  { id: 5, name: '감', radius: 44, color: '#FF8533', borderColor: '#D9651A', imageFile: '5_persimmon.png?v=2', imgW: 658, imgH: 659 },
-  { id: 6, name: '사과', radius: 55, color: '#FF4D4D', borderColor: '#CC3333', imageFile: '6_apple.png?v=2', imgW: 560, imgH: 628 },
-  { id: 7, name: '배', radius: 63, color: '#FFE162', borderColor: '#D9BC41', imageFile: '7_pear.png?v=2', imgW: 620, imgH: 769 },
-  { id: 8, name: '복숭아', radius: 76, color: '#FFADAD', borderColor: '#D98A8A', imageFile: '8_peach.png?v=2', imgW: 530, imgH: 594 },
-  { id: 9, name: '파인애플', radius: 90, color: '#FFEC33', borderColor: '#D9C81A', imageFile: '9_pineapple_round.png', imgW: 612, imgH: 789 },
-  { id: 10, name: '멜론', radius: 110, color: '#B2FF66', borderColor: '#8ACC4D', imageFile: '10_melon.png?v=2', imgW: 592, imgH: 690 },
-  { id: 11, name: '수박', radius: 126, color: '#2DB400', borderColor: '#248F00', imageFile: '11_watermelon.png?v=2', imgW: 586, imgH: 681 },
+  { id: 2, name: '딸기', radius: 20, color: '#FF5E7E', borderColor: '#D94361', imageFile: '2_strawberry.png?v=2', imgW: 504, imgH: 618 },
+  { id: 3, name: '포도', radius: 28, color: '#A066FF', borderColor: '#7A49D1', imageFile: '3_grape.png?v=2', imgW: 570, imgH: 794 },
+  { id: 4, name: '귤', radius: 35, color: '#FFCC00', borderColor: '#E6B800', imageFile: '4_tangerine_v3.png', imgW: 638, imgH: 720 },
+  { id: 5, name: '감', radius: 43, color: '#FF8533', borderColor: '#D9651A', imageFile: '5_persimmon.png?v=2', imgW: 658, imgH: 659 },
+  { id: 6, name: '사과', radius: 53, color: '#FF4D4D', borderColor: '#CC3333', imageFile: '6_apple.png?v=2', imgW: 560, imgH: 628 },
+  { id: 7, name: '배', radius: 61, color: '#FFE162', borderColor: '#D9BC41', imageFile: '7_pear.png?v=2', imgW: 620, imgH: 769 },
+  { id: 8, name: '복숭아', radius: 74, color: '#FFADAD', borderColor: '#D98A8A', imageFile: '8_peach.png?v=2', imgW: 530, imgH: 594 },
+  { id: 9, name: '파인애플', radius: 88, color: '#FFEC33', borderColor: '#D9C81A', imageFile: '9_pineapple_round.png', imgW: 612, imgH: 789 },
+  { id: 10, name: '멜론', radius: 107, color: '#B2FF66', borderColor: '#8ACC4D', imageFile: '10_melon.png?v=2', imgW: 592, imgH: 690 },
+  { id: 11, name: '수박', radius: 123, color: '#2DB400', borderColor: '#248F00', imageFile: '11_watermelon.png?v=2', imgW: 586, imgH: 681 },
 ];
 
 const SuikaGame: React.FC = () => {
