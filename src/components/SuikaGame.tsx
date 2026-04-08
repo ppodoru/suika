@@ -531,7 +531,7 @@ const SuikaGame: React.FC = () => {
       angularVelocity: 0,
       velocity: { x: 0, y: 0 },
       slop: 0.05,
-      mass: 5,
+      mass: 2.5,
       isNew: !isMerge,
       render: {
         sprite: {
