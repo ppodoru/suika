@@ -525,7 +525,9 @@ const SuikaGame: React.FC = () => {
       restitution: 0.45,
       friction: 0.07,
       frictionStatic: 0,
-      frictionAir: 0.001,
+      frictionAir: 0.01,
+      angle: 0,
+      angularVelocity: 0,
       slop: 0,
       mass: 1,
       isNew: !isMerge,
@@ -558,7 +560,7 @@ const SuikaGame: React.FC = () => {
       const radius = FRUIT_TYPES[currentFruitIndex].radius;
       const minX = 30 + radius;
       const maxX = 470 - radius;
-      setCloudX(Math.max(minX, Math.min(maxX, (clientX - rect.left) / scale)));
+      setCloudX(Math.round(Math.max(minX, Math.min(maxX, (clientX - rect.left) / scale))));
     }
   };
 
