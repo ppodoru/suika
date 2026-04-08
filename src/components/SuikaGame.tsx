@@ -591,13 +591,11 @@ const SuikaGame: React.FC = () => {
       <div ref={containerRef} className={`relative flex flex-col lg:flex-row gap-4 lg:gap-8 items-center lg:items-start z-10 p-0 transform -translate-y-2 ${isShake ? 'animate-shake' : ''}`}>
         <div style={{ width: 500 * scale, height: 650 * scale }} className="relative shrink-0">
           <div style={{ transform: `scale(${scale})`, transformOrigin: 'top left', width: 500, height: 650 }} className="absolute top-0 left-0 bg-white/10 rounded-b-[40px]">
-            <div className="absolute top-4 left-4 flex gap-2 z-0">
-              <div className="px-4 py-1 bg-[#FF8080] text-white rounded-full shadow-lg border-2 border-white font-bold text-lg whitespace-nowrap">
-                SCORE: {score}
-              </div>
-              <div className="px-4 py-1 bg-[#FFB84D] text-white rounded-full shadow-lg border-2 border-white font-bold text-lg whitespace-nowrap">
-                BEST: {highScore}
-              </div>
+            <div className="absolute top-4 left-4 px-4 py-1 bg-[#FF8080] text-white rounded-full shadow-lg border-2 border-white font-bold text-lg z-0 whitespace-nowrap">
+              SCORE: {score}
+            </div>
+            <div className="absolute top-4 right-4 px-4 py-1 bg-[#FFB84D] text-white rounded-full shadow-lg border-2 border-white font-bold text-lg z-0 whitespace-nowrap">
+              BEST: {highScore}
             </div>
             {/* 이벤트 처리용 최상위 컨테이너 */}
             <div onMouseMove={handleMove} onTouchMove={handleMove} onTouchStart={handleMove} onTouchEnd={handleClick} onClick={handleClick} style={{ touchAction: 'none' }} className="relative w-[500px] h-[650px] cursor-none">
