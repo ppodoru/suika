@@ -499,6 +499,14 @@ const SuikaGame: React.FC = () => {
                 </div>
               </div>
 
+              {/* 낙하 가이드 점선 (z-[15]) */}
+              {isClickable && !isGameOver && (
+                <div 
+                  className="absolute top-[60px] bottom-[100px] border-l-2 border-dashed border-white/40 pointer-events-none z-[15]"
+                  style={{ left: `${cloudX}px` }}
+                />
+              )}
+
               {/* 2. 물리 엔진 캔버스 (z-20: 구름 앞, 들고 있는 과일 뒤) */}
               <div ref={sceneRef} className="absolute inset-0 pointer-events-none z-20" />
 
