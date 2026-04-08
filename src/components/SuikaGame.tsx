@@ -536,7 +536,7 @@ const SuikaGame: React.FC = () => {
               {FRUIT_TYPES.map((fruit, i) => {
                 const angle = (i / FRUIT_TYPES.length) * Math.PI * 2 - Math.PI / 2;
                 return <img key={i} src={`${import.meta.env.BASE_URL}fruits/${fruit.imageFile}`} className="absolute drop-shadow"
-                    style={{ width: (12 + i * 1.8) * scale, height: 'auto', transform: `translate(${Math.cos(angle) * 48 * scale}px, ${Math.sin(angle) * 48 * scale}px)` }} alt={fruit.name} />;
+                    style={{ width: (15 + i * 2.0) * scale, height: 'auto', transform: `translate(${Math.cos(angle) * 52 * scale}px, ${Math.sin(angle) * 52 * scale}px)` }} alt={fruit.name} />;
               })}
             </div>
           </div>
