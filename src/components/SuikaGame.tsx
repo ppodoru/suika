@@ -553,8 +553,8 @@ const SuikaGame: React.FC = () => {
       </div>
       {isGameOver && (
         <div className="absolute inset-0 bg-transparent z-50 flex items-center justify-center px-4 pointer-events-none">
-          <div className="bg-white/5 p-10 rounded-[3rem] shadow-2xl border-8 border-orange-500/60 text-center max-w-sm w-full animate-in fade-in zoom-in duration-300 pointer-events-auto">
-            <h2 className="text-5xl lg:text-6xl font-black text-white drop-shadow-[0_4px_6px_rgba(0,0,0,1)] mb-4">GAME OVER!</h2>
+          <div className="bg-transparent p-10 rounded-[3rem] text-center max-w-sm w-full animate-in fade-in zoom-in duration-300 pointer-events-auto">
+            <h2 className="text-5xl lg:text-6xl font-black text-white drop-shadow-[0_4px_6px_rgba(0,0,0,1)] mb-4 uppercase">GAME OVER!</h2>
             <p className="text-2xl font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,1)] mb-8">최종 점수: {score}</p>
             <button onClick={() => window.location.reload()} className="px-10 py-4 bg-orange-500/30 hover:bg-orange-600/50 text-white text-2xl font-black rounded-full shadow-lg transition-transform hover:scale-110 active:scale-95 border-4 border-white drop-shadow-md">다시 도전하기</button>
           </div>
