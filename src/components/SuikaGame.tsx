@@ -210,9 +210,10 @@ const SuikaGame: React.FC = () => {
     const engine = Matter.Engine.create();
     engineRef.current = engine;
     engine.gravity.y = 1.5;
-    // 과일이 바닥/벽을 뚫고 나가지 않도록 엔진 충돌 정밀도 대폭 향상
-    engine.positionIterations = 20;
-    engine.velocityIterations = 20;
+    engine.gravity.x = 0; // 수평 중력 편향 제거
+    // 물리 엔진 정밀도 조정 (과도한 반복은 오히려 편향성 유발 가능)
+    engine.positionIterations = 10;
+    engine.velocityIterations = 10;
 
     const render = Matter.Render.create({
       element: sceneRef.current,
@@ -528,7 +529,8 @@ const SuikaGame: React.FC = () => {
       frictionAir: 0.01,
       angle: 0,
       angularVelocity: 0,
-      slop: 0,
+      velocity: { x: 0, y: 0 },
+      slop: 0.05,
       mass: 1,
       isNew: !isMerge,
       render: {
