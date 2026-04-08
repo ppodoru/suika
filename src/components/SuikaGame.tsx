@@ -239,7 +239,7 @@ const SuikaGame: React.FC = () => {
     const glassOptions = {
       isStatic: true,
       friction: 0.1,
-      restitution: 0.2,
+      restitution: 0,
       render: { fillStyle: '#FFFFFF55', strokeStyle: '#B2EBF2', lineWidth: 4 }
     };
 
@@ -255,6 +255,7 @@ const SuikaGame: React.FC = () => {
       Matter.Bodies.rectangle(centerX, centerY + containerHeight/2 + wallThickness/2, containerWidth + wallThickness * 2, wallThickness, {
         isStatic: true,
         friction: 0.1,
+        restitution: 0,
         render: { fillStyle: '#FFE4B5', strokeStyle: '#DEB887', lineWidth: 4 }, // 우드/베이지 톤
         label: 'wall'
       }),
@@ -523,7 +524,7 @@ const SuikaGame: React.FC = () => {
 
     const options: any = {
       label: `fruit_${index + 1}`,
-      restitution: 0.45,
+      restitution: 0,
       friction: 0.07,
       frictionStatic: 0,
       frictionAir: 0.01,
