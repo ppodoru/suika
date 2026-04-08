@@ -209,7 +209,7 @@ const SuikaGame: React.FC = () => {
 
     const engine = Matter.Engine.create();
     engineRef.current = engine;
-    engine.gravity.y = 1.2;
+    engine.gravity.y = 1.5;
     // 과일이 바닥/벽을 뚫고 나가지 않도록 엔진 충돌 정밀도 대폭 향상
     engine.positionIterations = 20;
     engine.velocityIterations = 20;
@@ -523,7 +523,7 @@ const SuikaGame: React.FC = () => {
     const options: any = {
       label: `fruit_${index + 1}`,
       restitution: 0.3,
-      friction: 0.1,
+      friction: 0.05,
       mass: 1,
       isNew: !isMerge,
       render: {
