@@ -522,8 +522,8 @@ const SuikaGame: React.FC = () => {
 
     const options: any = {
       label: `fruit_${index + 1}`,
-      restitution: 0.4,
-      friction: 0.1,
+      restitution: 0.45,
+      friction: 0.07,
       frictionStatic: 0,
       frictionAir: 0.001,
       slop: 0,
@@ -538,7 +538,7 @@ const SuikaGame: React.FC = () => {
       }
     };
     const fruit = Matter.Bodies.circle(x, y, type.radius, options);
-    if (isMerge) Matter.Body.applyForce(fruit, fruit.position, { x: 0, y: -0.01 });
+    if (isMerge) Matter.Body.applyForce(fruit, fruit.position, { x: 0, y: -0.02 });
     Matter.Composite.add(world, fruit);
     return fruit;
   };
