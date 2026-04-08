@@ -180,22 +180,37 @@ const SuikaGame: React.FC = () => {
 
   // 개발자 테스트 모드: 키보드 단축키로 과일 즉시 변경
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      const key = e.key.toLowerCase();
-      if (key >= '1' && key <= '9') {
-        setCurrentFruitIndex(parseInt(key) - 1);
-      } else if (key === '0') {
-        setCurrentFruitIndex(9); // 멜론
-      } else if (key === 'w') {
-        setCurrentFruitIndex(10); // 수박
+  const handleKeyDown = (e: KeyboardEvent) => {
+    const key = e.key.toLowerCase();
+    if (key >= '1' && key <= '9') {
+      setCurrentFruitIndex(parseInt(key) - 1);
+    } else if (key === '0') {
+      setCurrentFruitIndex(9); // 멜론
+    } else if (key === 'w') {
+      setCurrentFruitIndex(10); // 수박
+    }
+  };
+  window.addEventListener('keydown', handleKeyDown);
+  return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // 모바일에서 앱 전환 후 복귀 시 오디오 재개
+  useEffect(() => {
+  const handleVisibilityChange = () => {
+    if (document.visibilityState === 'visible' && audioCtxRef.current) {
+      if (audioCtxRef.current.state === 'suspended') {
+        audioCtxRef.current.resume().catch(e => console.error('AudioContext resume failed:', e));
       }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    }
+  };
+
+  document.addEventListener('visibilitychange', handleVisibilityChange);
+  return () => {
+    document.removeEventListener('visibilitychange', handleVisibilityChange);
+  };
   }, []);
 
   const runnerRef = useRef<Matter.Runner | null>(null);
-
   useEffect(() => {
     if (isGameOver && runnerRef.current) {
       Matter.Runner.stop(runnerRef.current);
