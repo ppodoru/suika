@@ -38,15 +38,86 @@ const SuikaGame: React.FC = () => {
   const [isGameOver, setIsGameOver] = useState(false);
   const [scale, setScale] = useState(1);
   const gameOverTimerRef = useRef<number | null>(null);
-  const bgmRef = useRef<HTMLAudioElement>(null);
   const [bgmStarted, setBgmStarted] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [isGameStarted, setIsGameStarted] = useState(false);
   const audioCtxRef = useRef<AudioContext | null>(null);
+  const bgmBufferRef = useRef<AudioBuffer | null>(null);
+  const bgmSourceRef = useRef<AudioBufferSourceNode | null>(null);
+  const bgmGainRef = useRef<GainNode | null>(null);
+
+  const playBgm = async () => {
+    try {
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContextClass) return;
+      if (!audioCtxRef.current) {
+        audioCtxRef.current = new AudioContextClass();
+      }
+      const ctx = audioCtxRef.current;
+      if (ctx.state === 'suspended') await ctx.resume();
+
+      if (!bgmBufferRef.current) {
+        const response = await fetch(`${import.meta.env.BASE_URL}suika_new_bgm.mp3`);
+        const arrayBuffer = await response.arrayBuffer();
+        bgmBufferRef.current = await ctx.decodeAudioData(arrayBuffer);
+      }
+
+      if (bgmSourceRef.current) {
+        try { bgmSourceRef.current.stop(); } catch(e) {}
+      }
+
+      const source = ctx.createBufferSource();
+      source.buffer = bgmBufferRef.current;
+      source.loop = true;
+
+      const gain = ctx.createGain();
+      gain.gain.value = isMuted ? 0 : 0.5;
+      bgmGainRef.current = gain;
+
+      source.connect(gain);
+      gain.connect(ctx.destination);
+      source.start(0);
+
+      bgmSourceRef.current = source;
+      setBgmStarted(true);
+    } catch (e) {
+      console.error('BGM play failed:', e);
+    }
+  };
+
+  const playPopSound = () => {
+    try {
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContextClass) return;
+      if (!audioCtxRef.current) {
+        audioCtxRef.current = new AudioContextClass();
+      }
+      const ctx = audioCtxRef.current;
+      if (ctx.state === 'suspended') ctx.resume();
+
+      // 뽁! 소리: 짧은 사인파 + 빠른 피치 다운
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(520, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.12);
+
+      gain.gain.setValueAtTime(0.45, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.13);
+
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.13);
+    } catch (e) {
+      console.error('Pop sound failed', e);
+    }
+  };
 
   useEffect(() => {
-    if (bgmRef.current) {
-      bgmRef.current.muted = isMuted;
+    if (bgmGainRef.current && audioCtxRef.current) {
+      bgmGainRef.current.gain.setTargetAtTime(isMuted ? 0 : 0.5, audioCtxRef.current.currentTime, 0.1);
     }
   }, [isMuted]);
 
@@ -88,6 +159,16 @@ const SuikaGame: React.FC = () => {
       },
     });
 
+    // 🔥 확실한 레이어 보장을 위해 캔버스 엘리먼트에 직접 스타일 및 z-index 강제 주입
+    if (render.canvas) {
+      render.canvas.style.position = 'absolute';
+      render.canvas.style.top = '0';
+      render.canvas.style.left = '0';
+      render.canvas.style.zIndex = '20';
+      render.canvas.style.pointerEvents = 'none';
+      render.canvas.style.backgroundColor = 'transparent';
+    }
+
     const glassOptions = {
       isStatic: true,
       friction: 0.1,
@@ -122,21 +203,23 @@ const SuikaGame: React.FC = () => {
 
     Matter.Composite.add(engine.world, potWalls);
 
+    // AudioContext 초기화 헬퍼
+    const getAudioCtx = () => {
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContextClass) return null;
+      if (!audioCtxRef.current) {
+        audioCtxRef.current = new AudioContextClass();
+      }
+      const ctx = audioCtxRef.current;
+      if (ctx.state === 'suspended') ctx.resume();
+      return ctx;
+    };
+
     // Web Audio API를 이용한 합치기(Merge) 효과음 생성 함수
     const playMergeSound = (typeIndex: number) => {
       try {
-        const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
-        if (!AudioContextClass) return;
-        
-        // AudioContext를 한 번만 생성하여 재사용 (브라우저 제한 방지)
-        if (!audioCtxRef.current) {
-          audioCtxRef.current = new AudioContextClass();
-        }
-        
-        const audioCtx = audioCtxRef.current;
-        if (audioCtx.state === 'suspended') {
-          audioCtx.resume();
-        }
+        const audioCtx = getAudioCtx();
+        if (!audioCtx) return;
 
         const oscillator = audioCtx.createOscillator();
         const gainNode = audioCtx.createGain();
@@ -160,7 +243,47 @@ const SuikaGame: React.FC = () => {
       }
     };
 
-    // 병합 로직
+    // 과일 착지 효과음 (과일이 벽/바닥에 닿을 때)
+    const playDropSound = (typeIndex: number, speed: number) => {
+      try {
+        const audioCtx = getAudioCtx();
+        if (!audioCtx) return;
+
+        // 충돌 속도에 따른 볼륨 (너무 느리면 소리 안냄)
+        const volume = Math.min(speed / 8, 1) * 0.35;
+        if (volume < 0.03) return;
+
+        // 노이즈 버퍼 생성 (퍽/통 소리)
+        const bufferSize = audioCtx.sampleRate * 0.08;
+        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 3);
+        }
+
+        const source = audioCtx.createBufferSource();
+        source.buffer = buffer;
+
+        // 과일 크기에 따라 주파수 필터 조정 (클수록 낮고 묵직하게)
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.value = Math.max(80, 300 - typeIndex * 18);
+        filter.Q.value = 1.5;
+
+        const gainNode = audioCtx.createGain();
+        gainNode.gain.setValueAtTime(volume, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
+
+        source.connect(filter);
+        filter.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        source.start();
+      } catch (e) {
+        console.error('Drop sound failed', e);
+      }
+    };
+
+    // 병합 로직 + 착지 효과음
     Matter.Events.on(engine, 'collisionStart', (event) => {
       event.pairs.forEach((pair) => {
         const bodyA = pair.bodyA;
@@ -169,19 +292,33 @@ const SuikaGame: React.FC = () => {
         if (bodyA.label.startsWith('fruit_')) (bodyA as any).isNew = false;
         if (bodyB.label.startsWith('fruit_')) (bodyB as any).isNew = false;
 
+        // 과일 합치기
         if (bodyA.label === bodyB.label && bodyA.label.startsWith('fruit_')) {
           const typeIndex = parseInt(bodyA.label.split('_')[1]);
           const points = [0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66];
           setScore(prev => prev + points[typeIndex]);
           
-          if (!isMuted) {
-            playMergeSound(typeIndex);
-          }
+          playMergeSound(typeIndex);
           
           Matter.Composite.remove(engine.world, [bodyA, bodyB]);
           if (typeIndex < 11) {
             createFruit((bodyA.position.x + bodyB.position.x) / 2, (bodyA.position.y + bodyB.position.y) / 2, typeIndex, engine.world, true);
           }
+          return;
+        }
+
+        // 과일이 벽/바닥/다른 과일에 착지할 때 효과음
+        const fruitBody = bodyA.label.startsWith('fruit_') ? bodyA
+          : bodyB.label.startsWith('fruit_') ? bodyB
+          : null;
+        const otherBody = fruitBody === bodyA ? bodyB : bodyA;
+
+        if (fruitBody && (otherBody.label === 'wall' || otherBody.label === 'wall_left' || otherBody.label === 'wall_right' || otherBody.label.startsWith('fruit_'))) {
+          const typeIndex = parseInt(fruitBody.label.split('_')[1]) - 1;
+          // 충돌 속도 계산
+          const vel = fruitBody.velocity;
+          const speed = Math.sqrt(vel.x * vel.x + vel.y * vel.y);
+          playDropSound(typeIndex, speed);
         }
       });
     });
@@ -276,23 +413,32 @@ const SuikaGame: React.FC = () => {
       } else {
         clientX = (e as React.MouseEvent).clientX;
       }
-      // scale을 나누어주어 축소된 화면에서도 마우스 위치가 정확하게 맵핑되도록 조정
-      setCloudX(Math.max(100, Math.min(400, (clientX - rect.left) / scale)));
+      // 벽 안쪽 경계: 좌 60, 우 440 (containerWidth=380, centerX=250 기준)
+      // 현재 과일 반지름만큼 안쪽으로 제한해 벽에 닿지 않도록 함
+      const radius = FRUIT_TYPES[currentFruitIndex].radius;
+      const minX = 60 + radius;
+      const maxX = 440 - radius;
+      setCloudX(Math.max(minX, Math.min(maxX, (clientX - rect.left) / scale)));
     }
   };
 
   const handleClick = () => {
-    if (!bgmStarted && bgmRef.current) {
-      bgmRef.current.volume = 0.5;
-      bgmRef.current.play().catch(e => console.log('Audio play failed:', e));
-      setBgmStarted(true);
+    if (!bgmStarted && isGameStarted) {
+      playBgm();
     }
     
     if (!isClickable || isGameOver || !engineRef.current) return;
     setIsClickable(false);
-    createFruit(cloudX, 10, currentFruitIndex, engineRef.current.world);
+    playPopSound();
+    createFruit(cloudX, 32, currentFruitIndex, engineRef.current.world);
     setTimeout(() => {
+      // 새 과일로 변경
       setCurrentFruitIndex(nextFruitIndex);
+      
+      // 새 과일의 크기가 기존보다 클 수 있으므로 위치를 즉시 안전한 범위로 자동 이동
+      const newRadius = FRUIT_TYPES[nextFruitIndex].radius;
+      setCloudX(prevX => Math.max(60 + newRadius, Math.min(440 - newRadius, prevX)));
+      
       setNextFruitIndex(Math.floor(Math.random() * 5));
       setIsClickable(true);
     }, 800);
@@ -300,7 +446,6 @@ const SuikaGame: React.FC = () => {
 
   return (
     <div className="relative flex flex-col items-center justify-start min-h-screen bg-[#FFF9E6] font-sans overflow-hidden pt-0">
-      <audio ref={bgmRef} src={`${import.meta.env.BASE_URL}bgm.mp3`} loop />
       
       {/* 음소거 토글 버튼 (전체 화면 고정) */}
       <button 
@@ -317,39 +462,49 @@ const SuikaGame: React.FC = () => {
             <div className="absolute top-4 left-4 px-4 py-1 bg-[#FF8080] text-white rounded-full shadow-lg border-2 border-white font-bold text-lg z-30 whitespace-nowrap">
               SCORE: {score}
             </div>
-            <div ref={sceneRef} onMouseMove={handleMove} onTouchMove={handleMove} onTouchStart={handleMove} onTouchEnd={handleClick} onClick={handleClick} style={{ touchAction: 'none' }} className="relative w-[500px] h-[650px] cursor-none">
-            <div className="absolute top-0 pointer-events-none" style={{ left: `${cloudX}px`, transform: 'translateX(-50%)' }}>
-              {/* 구름 그림준이에 과일을 중앙에 표시 */}
-              <div className="relative flex items-center justify-center w-24 h-12 bg-white rounded-full shadow-md">
-                <div className="absolute -bottom-1 w-16 h-8 bg-white rounded-full" />
+            {/* 이벤트 처리용 최상위 컨테이너 */}
+            <div onMouseMove={handleMove} onTouchMove={handleMove} onTouchStart={handleMove} onTouchEnd={handleClick} onClick={handleClick} style={{ touchAction: 'none' }} className="relative w-[500px] h-[650px] cursor-none">
+              
+              {/* 1. 구름 몸체 (z-10: 가장 뒤) */}
+              <div className="absolute top-0 pointer-events-none z-10" style={{ left: `${cloudX}px` }}>
+                <div className="absolute top-0 w-32 h-16 bg-white rounded-full shadow-md" style={{ left: '-30px' }}>
+                  <div className="absolute -bottom-1 w-20 h-10 bg-white rounded-full left-1/2 -translate-x-1/2" />
+                  <div className="absolute flex gap-2.5" style={{ bottom: '8px', left: '50%', transform: 'translateX(-50%)' }}>
+                    <div className="w-2 h-2 bg-black/40 rounded-full" />
+                    <div className="w-2 h-2 bg-black/40 rounded-full" />
+                  </div>
+                </div>
+              </div>
+
+              {/* 2. 물리 엔진 캔버스 (z-20: 구름 앞, 들고 있는 과일 뒤) */}
+              <div ref={sceneRef} className="absolute inset-0 pointer-events-none z-20" />
+
+              {/* 3. 들고 있는 과일 (z-30: 가장 앞) */}
+              <div className="absolute pointer-events-none z-30" style={{ left: `${cloudX}px`, top: '32px', transform: 'translateX(-50%) translateY(-50%)' }}>
                 {isClickable && !isGameOver && (
                   <img 
                     src={`${import.meta.env.BASE_URL}fruits/${FRUIT_TYPES[currentFruitIndex].imageFile}`}
-                    className="relative z-10 drop-shadow-md"
+                    className="drop-shadow-md"
                     style={{ 
-                      width: Math.min(FRUIT_TYPES[currentFruitIndex].radius * 1.95, 48),
+                      width: FRUIT_TYPES[currentFruitIndex].radius * 1.95,
                       height: 'auto',
                       objectFit: 'contain'
                     }}
                     alt="fruit"
                   />
                 )}
-                <div className="absolute flex gap-2" style={{ bottom: '6px' }}>
-                  <div className="w-1.5 h-1.5 bg-black/40 rounded-full" />
-                  <div className="w-1.5 h-1.5 bg-black/40 rounded-full" />
-                </div>
               </div>
+              
+              <div className="absolute top-[110px] left-[70px] right-[70px] h-0.5 border-t-2 border-dashed border-red-400 opacity-50 pointer-events-none z-40" />
             </div>
-            <div className="absolute top-[110px] left-[70px] right-[70px] h-0.5 border-t-2 border-dashed border-red-400 opacity-50 pointer-events-none" />
-          </div>
         </div>
         </div>
         <div className="flex flex-row lg:flex-col gap-4 lg:gap-6 mt-0 lg:mt-12 w-full max-w-[500px] justify-center lg:justify-start">
           <div className="w-32 h-44 p-4 bg-white/80 rounded-3xl shadow-xl border-4 border-[#FFD700] flex flex-col items-center justify-between shrink-0">
             <div className="text-[#B38B00] font-bold text-sm">NEXT</div>
             <div className="flex-1 flex items-center justify-center pt-2">
-              <img src={`${import.meta.env.BASE_URL}fruits/${FRUIT_TYPES[nextFruitIndex].imageFile}`} className="drop-shadow-lg transition-all duration-300 transform scale-125"
-                style={{ width: Math.max(30, FRUIT_TYPES[nextFruitIndex].radius * 1.8), height: 'auto', objectFit: 'contain' }} alt="next" />
+              <img src={`${import.meta.env.BASE_URL}fruits/${FRUIT_TYPES[nextFruitIndex].imageFile}`} className="drop-shadow-lg transition-all duration-300"
+                style={{ width: FRUIT_TYPES[nextFruitIndex].radius * 1.95, height: 'auto', objectFit: 'contain' }} alt="next" />
             </div>
             <div className="text-xs font-bold text-gray-500">{FRUIT_TYPES[nextFruitIndex].name}</div>
           </div>
@@ -383,11 +538,7 @@ const SuikaGame: React.FC = () => {
             <button 
               onClick={() => {
                 setIsGameStarted(true);
-                if (bgmRef.current) {
-                  bgmRef.current.volume = 0.5;
-                  bgmRef.current.play().catch(e => console.log('Audio play failed:', e));
-                  setBgmStarted(true);
-                }
+                playBgm();
               }}
               className="px-10 py-4 bg-[#FF8080] hover:bg-[#FF4D4D] text-white text-2xl font-black rounded-full shadow-lg transition-transform hover:scale-105 active:scale-95 whitespace-nowrap"
             >
