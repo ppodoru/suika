@@ -875,7 +875,7 @@ const SuikaGame: React.FC = () => {
         <div className="absolute inset-0 bg-black/30 z-50 flex flex-col items-center justify-center backdrop-blur-sm px-4">
           <div className="bg-transparent p-10 rounded-[3rem] text-center max-w-xl w-full animate-in zoom-in duration-300">
             <h1 className="text-6xl font-black text-white drop-shadow-[0_6px_10px_rgba(0,0,0,1)] mb-4 tracking-tighter">SUIKA GAME</h1>
-            <p className="text-2xl text-white drop-shadow-[0_3px_5px_rgba(0,0,0,1)] mb-10 font-bold whitespace-nowrap">과일을 모아 수박을 만드세요! 🍉</p>
+            <p className="text-2xl text-white drop-shadow-[0_3px_5px_rgba(0,0,0,1)] mb-10 font-bold">과일을 모아 수박을 만드세요! <br /> 🍉</p>
             <button 
               onClick={() => {
                 setIsGameStarted(true);
