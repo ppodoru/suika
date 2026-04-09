@@ -49,5 +49,5 @@ canvas {
 }
 
 .animate-merge-ring {
-  animation: merge-ring 0.6s ease-out forwards;
+  animation: merge-ring 0.4s ease-out forwards;
 }

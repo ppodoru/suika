@@ -18,6 +18,7 @@ interface VisualEffect {
   x: number;
   y: number;
   color: string;
+  size: number;
 }
 
 const FRUIT_TYPES: FruitData[] = [
@@ -127,12 +128,12 @@ const SuikaGame: React.FC = () => {
     }
   };
 
-  const addMergeEffect = (x: number, y: number, color: string) => {
+  const addMergeEffect = (x: number, y: number, color: string, size: number) => {
     const id = Date.now() + Math.random();
-    setMergeEffects(prev => [...prev, { id, x, y, color }]);
+    setMergeEffects(prev => [...prev, { id, x, y, color, size }]);
     setTimeout(() => {
       setMergeEffects(prev => prev.filter(e => e.id !== id));
-    }, 600);
+    }, 400); // 600ms -> 400ms로 단축
   };
 
   useEffect(() => {
@@ -302,17 +303,19 @@ const SuikaGame: React.FC = () => {
       render.canvas.style.backgroundColor = 'transparent';
     }
 
-    const spawnParticles = (x: number, y: number, color: string, count: number) => {
+    const spawnParticles = (x: number, y: number, color: string, count: number, sizeFactor: number = 1) => {
       const particles: Matter.Body[] = [];
       for (let i = 0; i < count; i++) {
-        const p = Matter.Bodies.circle(x, y, Math.random() * 2 + 1, {
+        // 과일 크기에 따라 파티클 크기도 약간 조절 (1~2 -> sizeFactor 반영)
+        const p = Matter.Bodies.circle(x, y, (Math.random() * 1.5 + 0.5) * sizeFactor, {
           friction: 0.1,
           restitution: 0.8,
           label: 'particle',
           collisionFilter: { group: -1, mask: 0 },
           render: { fillStyle: color }
         });
-        const forceMagnitude = (0.003 + Math.random() * 0.005) * p.mass;
+        // 과일이 크면 파티클이 더 멀리 퍼지도록 힘을 조절
+        const forceMagnitude = (0.003 + Math.random() * 0.004) * p.mass * sizeFactor;
         const angle = Math.random() * Math.PI * 2;
         Matter.Body.applyForce(p, p.position, {
           x: Math.cos(angle) * forceMagnitude,
@@ -323,7 +326,7 @@ const SuikaGame: React.FC = () => {
       Matter.Composite.add(engine.world, particles);
       setTimeout(() => {
         Matter.Composite.remove(engine.world, particles);
-      }, 800);
+      }, 500); // 800ms -> 500ms로 단축
     };
 
     const glassOptions = {
@@ -501,9 +504,12 @@ const SuikaGame: React.FC = () => {
           const midY = (bodyA.position.y + bodyB.position.y) / 2;
           const fruitColor = FRUIT_TYPES[typeIndex].color;
           
+          // 과일 크기에 따른 가중치 (체리 1.0 ~ 수박 약 2.5)
+          const sizeFactor = 1 + (typeIndex * 0.15);
+          
           // 공통 합성 효과 (파티클 + 링)
-          spawnParticles(midX, midY, fruitColor, 8 + typeIndex * 2);
-          addMergeEffect(midX, midY, fruitColor);
+          spawnParticles(midX, midY, fruitColor, 6 + typeIndex * 2, sizeFactor);
+          addMergeEffect(midX, midY, fruitColor, sizeFactor);
 
           if (typeNum === 11) {
             console.log('%c🍉 SUIKA MERGE SUCCESS!!! 🍉', 'color: #ff0000; font-size: 20px; font-weight: bold;');
@@ -705,8 +711,8 @@ const SuikaGame: React.FC = () => {
                     left: effect.x, 
                     top: effect.y, 
                     borderColor: effect.color,
-                    width: 40,
-                    height: 40,
+                    width: 40 * effect.size,
+                    height: 40 * effect.size,
                     borderRadius: '50%',
                     borderStyle: 'solid'
                   }}
