@@ -70,7 +70,7 @@ const SuikaGame: React.FC = () => {
       if (ctx.state === 'suspended') await ctx.resume();
 
       if (!bgmBufferRef.current) {
-        const response = await fetch(`${import.meta.env.BASE_URL}suika_new_bgm.mp3`);
+        const response = await fetch(`${import.meta.env.BASE_URL}bgm_cheerful.mp3`);
         const arrayBuffer = await response.arrayBuffer();
         bgmBufferRef.current = await ctx.decodeAudioData(arrayBuffer);
       }

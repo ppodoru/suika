@@ -59,5 +59,9 @@ npm run dev
 
 이후 브라우저에서 `http://localhost:5173` 접속하여 확인할 수 있습니다.
 
-## 📜 라이선스
+## 📜 라이선스 및 출처
 이 프로젝트는 교육 및 포트폴리오 목적으로 제작되었습니다.
+
+### 🎵 음원 출처 (Asset Credits)
+- **BGM (Happy Arcade Tune)**: [rezoner](https://opengameart.org/content/happy-arcade-tune) / Licensed under [CC-BY 3.0](https://creativecommons.org/licenses/by/3.0/)
+- **Sound Effects**: 물리 엔진 기반의 Web Audio API 생성음 사용.
