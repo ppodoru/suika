@@ -697,22 +697,26 @@ const SuikaGame: React.FC = () => {
         <h1 className="text-5xl font-black text-[#FF8533] drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)] tracking-tighter">SUIKA GAME</h1>
       </div>
 
-      <div ref={containerRef} className={`relative flex flex-col lg:flex-row gap-4 lg:gap-16 items-center lg:items-start z-10 p-0 transform -translate-y-2 ${isShake ? 'animate-shake' : ''}`}>
+      {/* 통합 게임 스테이지 (점수, 게임판, NEXT/진화 등 모든 요소를 포함한 영역) */}
+      <div 
+        ref={containerRef} 
+        className={`relative flex flex-col lg:flex-row gap-8 lg:gap-14 items-center lg:items-center z-10 p-8 lg:p-16 bg-white/50 backdrop-blur-xl rounded-[4rem] border-[1px] border-white/80 shadow-[0_40px_120px_-20px_rgba(0,0,0,0.25)] transform -translate-y-4 ${isShake ? 'animate-shake' : ''}`}
+      >
         
-        {/* PC 전용 좌측 사이드바 (점수판) */}
-        <div className="hidden lg:flex flex-col gap-6 mt-32 w-44 shrink-0">
-          <div className="p-5 bg-white/80 rounded-[2.5rem] shadow-xl border-4 border-[#FF8080] flex flex-col items-center">
+        {/* PC 전용 좌측 사이드바 (점수판) - 통합 프레임 내부에 맞춰 스타일 조정 */}
+        <div className="hidden lg:flex flex-col gap-6 w-44 shrink-0">
+          <div className="p-5 bg-white/90 rounded-[2.5rem] shadow-md border-2 border-[#FF8080]/30 flex flex-col items-center">
             <div className="text-[#FF8080] font-bold text-sm tracking-widest leading-none mb-2">SCORE</div>
             <div className="text-4xl font-black text-[#5C4033]">{score}</div>
           </div>
-          <div className="p-5 bg-white/80 rounded-[2.5rem] shadow-xl border-4 border-[#FFB84D] flex flex-col items-center">
+          <div className="p-5 bg-white/90 rounded-[2.5rem] shadow-md border-2 border-[#FFB84D]/30 flex flex-col items-center">
             <div className="text-[#FFB84D] font-bold text-sm tracking-widest leading-none mb-2">BEST</div>
             <div className="text-4xl font-black text-[#5C4033]">{highScore}</div>
           </div>
         </div>
 
         <div style={{ width: 500 * scale, height: 650 * scale }} className="relative shrink-0">
-          <div style={{ transform: `scale(${scale})`, transformOrigin: 'top left', width: 500, height: 650 }} className="absolute top-0 left-0 bg-[#FFFDF0] rounded-[3rem] border-[12px] border-[#FFD700]/30 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] overflow-hidden">
+          <div style={{ transform: `scale(${scale})`, transformOrigin: 'top left', width: 500, height: 650 }} className="absolute top-0 left-0 bg-white/60 rounded-[3rem] border-4 border-[#FFD700]/30 shadow-inner overflow-hidden">
             {/* 모바일 전용 상단 점수판 (lg:hidden) */}
             <div className="lg:hidden">
               <div className="absolute top-4 left-4 px-4 py-1 bg-[#FF8080] text-white rounded-full shadow-lg border-2 border-white font-bold text-lg z-0 whitespace-nowrap">
@@ -793,7 +797,7 @@ const SuikaGame: React.FC = () => {
             </div>
         </div>
         </div>
-        <div className="flex flex-row lg:flex-col gap-4 lg:gap-6 mt-0 lg:mt-32 w-full max-w-[500px] justify-center lg:justify-start shrink-0">
+        <div className="flex flex-row lg:flex-col gap-4 lg:gap-6 mt-0 w-full max-w-[500px] justify-center lg:justify-start shrink-0">
           <div className="w-40 h-44 p-4 bg-white/80 rounded-3xl shadow-xl border-4 border-[#FFD700] flex flex-col items-center justify-between shrink-0">
             <div className="text-[#B38B00] font-bold text-sm">NEXT</div>
             <div className="flex-1 flex items-center justify-center pt-2">
