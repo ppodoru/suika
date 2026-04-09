@@ -764,7 +764,7 @@ const SuikaGame: React.FC = () => {
         </div>
         </div>
         <div className="flex flex-row lg:flex-col gap-4 lg:gap-6 mt-0 lg:mt-12 w-full max-w-[500px] justify-center lg:justify-start">
-          <div className="w-32 h-44 p-4 bg-white/80 rounded-3xl shadow-xl border-4 border-[#FFD700] flex flex-col items-center justify-between shrink-0">
+          <div className="w-40 h-44 p-4 bg-white/80 rounded-3xl shadow-xl border-4 border-[#FFD700] flex flex-col items-center justify-between shrink-0">
             <div className="text-[#B38B00] font-bold text-sm">NEXT</div>
             <div className="flex-1 flex items-center justify-center pt-2">
               <img src={`${import.meta.env.BASE_URL}fruits/${FRUIT_TYPES[nextFruitIndex].imageFile}`} className="drop-shadow-lg transition-all duration-300"
