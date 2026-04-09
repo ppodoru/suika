@@ -286,8 +286,8 @@ const SuikaGame: React.FC = () => {
       element: sceneRef.current,
       engine: engine,
       options: {
-        width: 500,
-        height: 650,
+        width: 600, // 500 -> 600 (좌우 50px 여유)
+        height: 750, // 650 -> 750 (상하 50px 여유)
         wireframes: false,
         background: 'transparent',
       },
@@ -589,6 +589,11 @@ const SuikaGame: React.FC = () => {
     // Canvas 얼굴 렌더링 부분을 제거, 실제 이미지만 렌더링되도록 변경.
 
     Matter.Render.run(render);
+    // 물리 세계(0,0 ~ 500,650)를 중심으로 캔버스에 여유 공간(Safe Margin)을 둠
+    Matter.Render.lookAt(render, {
+      min: { x: -50, y: -50 },
+      max: { x: 550, y: 700 }
+    });
     const runner = Matter.Runner.create();
     runnerRef.current = runner;
     Matter.Runner.run(runner, engine);
@@ -774,8 +779,8 @@ const SuikaGame: React.FC = () => {
                 />
               )}
 
-              {/* 2. 물리 엔진 캔버스 (z-20: 구름 앞, 들고 있는 과일 뒤) */}
-              <div ref={sceneRef} className="absolute inset-0 pointer-events-none z-20" />
+              {/* 2. 물리 엔진 캔버스 (z-20: 50px 여백을 포함하여 확장됨, 잘림 방지) */}
+              <div ref={sceneRef} className="absolute z-20 pointer-events-none" style={{ width: 600, height: 750, left: -50, top: -50 }} />
 
               {/* 3. 들고 있는 과일 (z-30: 가장 앞) */}
               <div className="absolute pointer-events-none z-30" style={{ left: `${cloudX}px`, top: '32px', transform: 'translateX(-50%) translateY(-50%)' }}>
