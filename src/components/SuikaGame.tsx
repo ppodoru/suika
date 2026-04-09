@@ -857,7 +857,7 @@ const SuikaGame: React.FC = () => {
       {/* 게임 오버 팝업 (이전 투명 스타일 복구 및 강화) */}
       {isGameOver && (
         <div className="absolute inset-0 bg-transparent z-50 flex items-center justify-center px-4 pointer-events-none">
-          <div className="bg-transparent p-10 rounded-[3rem] text-center max-w-sm w-full animate-in zoom-in duration-300 pointer-events-auto">
+          <div className="bg-transparent p-10 rounded-[3rem] text-center max-w-xl w-full animate-in zoom-in duration-300 pointer-events-auto">
             <h2 className="text-6xl font-black text-white drop-shadow-[0_6px_10px_rgba(0,0,0,1)] mb-4 uppercase tracking-tighter">GAME OVER</h2>
             <p className="text-2xl font-bold text-white drop-shadow-[0_3px_5px_rgba(0,0,0,1)] mb-8">최종 점수: {score}</p>
             <button 
@@ -873,9 +873,9 @@ const SuikaGame: React.FC = () => {
       {/* 게임 시작 팝업 (플로팅 스타일로 통일) */}
       {!isGameStarted && (
         <div className="absolute inset-0 bg-black/30 z-50 flex flex-col items-center justify-center backdrop-blur-sm px-4">
-          <div className="bg-transparent p-10 rounded-[3rem] text-center max-w-sm w-full animate-in zoom-in duration-300">
+          <div className="bg-transparent p-10 rounded-[3rem] text-center max-w-xl w-full animate-in zoom-in duration-300">
             <h1 className="text-6xl font-black text-white drop-shadow-[0_6px_10px_rgba(0,0,0,1)] mb-4 tracking-tighter">SUIKA GAME</h1>
-            <p className="text-2xl text-white drop-shadow-[0_3px_5px_rgba(0,0,0,1)] mb-10 font-bold">과일을 모아 수박을 만드세요! 🍉</p>
+            <p className="text-2xl text-white drop-shadow-[0_3px_5px_rgba(0,0,0,1)] mb-10 font-bold whitespace-nowrap">과일을 모아 수박을 만드세요! 🍉</p>
             <button 
               onClick={() => {
                 setIsGameStarted(true);
