@@ -716,7 +716,7 @@ const SuikaGame: React.FC = () => {
         </div>
 
         <div style={{ width: 500 * scale, height: 650 * scale }} className="relative shrink-0">
-          <div style={{ transform: `scale(${scale})`, transformOrigin: 'top left', width: 500, height: 650 }} className="absolute top-0 left-0 bg-transparent rounded-b-[40px] overflow-hidden">
+          <div style={{ transform: `scale(${scale})`, transformOrigin: 'top left', width: 500, height: 650 }} className="absolute top-0 left-0 bg-transparent overflow-hidden">
             {/* 모바일 전용 상단 점수판 (lg:hidden) */}
             <div className="lg:hidden">
               <div className="absolute top-4 left-4 px-4 py-1 bg-[#FF8080] text-white rounded-full shadow-lg border-2 border-white font-bold text-lg z-0 whitespace-nowrap">
