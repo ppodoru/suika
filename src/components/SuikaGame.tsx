@@ -657,7 +657,7 @@ const SuikaGame: React.FC = () => {
       const radius = FRUIT_TYPES[currentFruitIndex].radius;
       const minX = 30 + radius;
       const maxX = 470 - radius;
-      setCloudX(Math.round(Math.max(minX, Math.min(maxX, (clientX - rect.left) / scale))));
+      setCloudX(Math.round(Math.max(minX, Math.min(maxX, (clientX - rect.left) / scale - 50))));
     }
   };
 
