@@ -681,7 +681,10 @@ const SuikaGame: React.FC = () => {
   return (
     <div className="relative flex flex-col items-center justify-start min-h-screen bg-[#FFF9E6] font-sans overflow-hidden pt-0">
       
-      {/* 음소거 버튼이 진화의 고리 내부로 이동되었습니다. */}
+      {/* PC 전용 상단 타이틀 */}
+      <div className="hidden lg:block mt-2 mb-2 z-10">
+        <h1 className="text-6xl font-black text-[#FF8533] drop-shadow-[0_4px_4px_rgba(0,0,0,0.1)] tracking-tighter">SUIKA GAME</h1>
+      </div>
 
       <div ref={containerRef} className={`relative flex flex-col lg:flex-row gap-4 lg:gap-16 items-center lg:items-start z-10 p-0 transform -translate-y-2 ${isShake ? 'animate-shake' : ''}`}>
         
