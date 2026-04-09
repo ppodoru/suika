@@ -854,27 +854,37 @@ const SuikaGame: React.FC = () => {
           </div>
         </div>
       </div>
+      {/* 게임 오버 팝업 */}
       {isGameOver && (
-        <div className="absolute inset-0 bg-transparent z-50 flex items-center justify-center px-4 pointer-events-none">
-          <div className="bg-transparent p-10 rounded-[3rem] text-center max-w-sm w-full animate-in fade-in zoom-in duration-300 pointer-events-auto">
-            <h2 className="text-5xl lg:text-6xl font-black text-white drop-shadow-[0_4px_6px_rgba(0,0,0,1)] mb-4 uppercase">GAME OVER!</h2>
-            <p className="text-2xl font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,1)] mb-8">최종 점수: {score}</p>
-            <button onClick={() => window.location.reload()} className="px-10 py-4 bg-orange-500/30 hover:bg-orange-600/50 text-white text-2xl font-black rounded-full shadow-lg transition-transform hover:scale-110 active:scale-95 border-4 border-white drop-shadow-md">다시 도전하기</button>
+        <div className="absolute inset-0 bg-black/60 z-50 flex items-center justify-center backdrop-blur-md px-4 pointer-events-none">
+          <div className="bg-white/95 p-10 lg:p-12 rounded-[4rem] shadow-2xl border-[10px] border-[#FFB833] text-center max-w-sm w-full animate-in zoom-in duration-300 pointer-events-auto">
+            <h2 className="text-5xl font-black text-[#FF8533] mb-4 uppercase tracking-tighter">GAME OVER</h2>
+            <div className="space-y-1 mb-8">
+              <p className="text-xl font-bold text-gray-500 uppercase tracking-widest">Final Score</p>
+              <p className="text-6xl font-black text-[#5C4033]">{score}</p>
+            </div>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="w-full py-5 bg-[#FF8080] hover:bg-[#FF4D4D] text-white text-2xl font-black rounded-[2rem] shadow-lg transition-all hover:scale-105 active:scale-95 border-b-8 border-[#D94361]"
+            >
+              다시 도전하기
+            </button>
           </div>
         </div>
       )}
 
+      {/* 게임 시작 팝업 */}
       {!isGameStarted && (
-        <div className="absolute inset-0 bg-black/60 z-50 flex flex-col items-center justify-center backdrop-blur-sm px-4">
-          <div className="bg-white p-10 rounded-[3rem] shadow-2xl border-8 border-[#FFB833] text-center max-w-sm w-full">
-            <h1 className="text-5xl font-black text-[#FF8533] mb-4">SUIKA GAME</h1>
-            <p className="text-lg text-gray-600 mb-8 font-bold">과일을 모아 수박을 만드세요! 🍉</p>
+        <div className="absolute inset-0 bg-black/60 z-50 flex flex-col items-center justify-center backdrop-blur-md px-4">
+          <div className="bg-white/95 p-10 lg:p-12 rounded-[4rem] shadow-2xl border-[10px] border-[#FFB833] text-center max-w-sm w-full animate-in zoom-in duration-300">
+            <h1 className="text-5xl font-black text-[#FF8533] mb-4 tracking-tighter">SUIKA GAME</h1>
+            <p className="text-xl text-gray-600 mb-10 font-bold">과일을 모아 수박을 만드세요! 🍉</p>
             <button 
               onClick={() => {
                 setIsGameStarted(true);
                 playBgm();
               }}
-              className="px-10 py-4 bg-[#FF8080] hover:bg-[#FF4D4D] text-white text-2xl font-black rounded-full shadow-lg transition-transform hover:scale-105 active:scale-95 whitespace-nowrap"
+              className="w-full py-5 bg-[#2DB400] hover:bg-[#248F00] text-white text-2xl font-black rounded-[2rem] shadow-lg transition-all hover:scale-105 active:scale-95 border-b-8 border-[#1D7400] whitespace-nowrap"
             >
               게임 시작하기
             </button>
