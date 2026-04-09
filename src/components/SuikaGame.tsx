@@ -702,6 +702,13 @@ const SuikaGame: React.FC = () => {
         <h1 className="text-5xl font-black text-[#FF8533] drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)] tracking-tighter">SUIKA GAME</h1>
       </div>
 
+      {/* 모바일 전용 상단 타이틀 바 */}
+      <div className="lg:hidden w-full pt-6 pb-2 text-center z-10">
+        <h1 className="text-3xl font-black text-[#FF8533] drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)] tracking-tighter">
+          SUIKA GAME
+        </h1>
+      </div>
+
       {/* 통합 게임 스테이지 (점수, 게임판, NEXT/진화 등 모든 요소를 포함한 영역) */}
       <div 
         ref={containerRef} 
