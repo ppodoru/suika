@@ -674,7 +674,7 @@ const SuikaGame: React.FC = () => {
   };
 
   const handleClick = () => {
-    if (!bgmStarted && isGameStarted) {
+    if (!bgmStarted && isGameStarted && !isGameOver) {
       playBgm();
     }
     
