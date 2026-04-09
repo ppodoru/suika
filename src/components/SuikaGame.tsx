@@ -264,8 +264,20 @@ const SuikaGame: React.FC = () => {
 
   const runnerRef = useRef<Matter.Runner | null>(null);
   useEffect(() => {
-    if (isGameOver && runnerRef.current) {
-      Matter.Runner.stop(runnerRef.current);
+    if (isGameOver) {
+      if (runnerRef.current) {
+        Matter.Runner.stop(runnerRef.current);
+      }
+      // 게임 오버 시 BGM 정지
+      if (bgmSourceRef.current) {
+        try {
+          bgmSourceRef.current.stop();
+          bgmSourceRef.current = null;
+          setBgmStarted(false);
+        } catch (e) {
+          // 이미 멈췄거나 오류 발생 시 무시
+        }
+      }
     }
   }, [isGameOver]);
 
