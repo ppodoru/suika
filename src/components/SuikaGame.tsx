@@ -573,6 +573,8 @@ const SuikaGame: React.FC = () => {
         if (gameOverTimerRef.current === null) {
           gameOverTimerRef.current = window.setTimeout(() => {
             setIsGameOver(true);
+            setIsShake(true);
+            setTimeout(() => setIsShake(false), 500);
           }, 2000);
         }
       } else {
