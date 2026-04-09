@@ -196,19 +196,54 @@ const SuikaGame: React.FC = () => {
 
   // 모바일에서 앱 전환 후 복귀 시 오디오 재개
   useEffect(() => {
-  const handleVisibilityChange = () => {
-    if (document.visibilityState === 'visible' && audioCtxRef.current) {
-      if (audioCtxRef.current.state === 'suspended') {
-        audioCtxRef.current.resume().catch(e => console.error('AudioContext resume failed:', e));
+    const resumeAudio = () => {
+      if (audioCtxRef.current) {
+        const ctx = audioCtxRef.current;
+        // iOS Safari에서는 visibilitychange 직후보다 약간의 지연 후 resume하는 것이 더 안정적일 때가 있음
+        setTimeout(() => {
+          if (ctx.state !== 'running') {
+            ctx.resume().then(() => {
+              // 묵시적으로 아주 짧은 무음 소리를 내어 오디오 엔진을 확실히 깨움 (iOS 팁)
+              const osc = ctx.createOscillator();
+              const silentGain = ctx.createGain();
+              silentGain.gain.value = 0.001;
+              osc.connect(silentGain);
+              silentGain.connect(ctx.destination);
+              osc.start(ctx.currentTime);
+              osc.stop(ctx.currentTime + 0.01);
+            }).catch(e => console.error('AudioContext resume failed:', e));
+          }
+        }, 100);
       }
-    }
-  };
+    };
 
-  document.addEventListener('visibilitychange', handleVisibilityChange);
-  return () => {
-    document.removeEventListener('visibilitychange', handleVisibilityChange);
-  };
-  }, []);
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        resumeAudio();
+      }
+    };
+
+    const handlePageShow = () => {
+      resumeAudio();
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('pageshow', handlePageShow);
+    
+    // 사용자가 화면을 터치할 때마다 오디오 상태를 체크하고 필요시 재개 (iOS 핵심 해결책)
+    const handleTouch = () => {
+      if (audioCtxRef.current && audioCtxRef.current.state === 'suspended') {
+        audioCtxRef.current.resume();
+      }
+    };
+    window.addEventListener('touchstart', handleTouch, { passive: true });
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('pageshow', handlePageShow);
+      window.removeEventListener('touchstart', handleTouch);
+    };
+  }, [isMuted]);
 
   const runnerRef = useRef<Matter.Runner | null>(null);
   useEffect(() => {
