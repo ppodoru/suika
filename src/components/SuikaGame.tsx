@@ -679,8 +679,19 @@ const SuikaGame: React.FC = () => {
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-start min-h-screen bg-[#FFF9E6] font-sans overflow-hidden pt-0">
+    <div className="relative flex flex-col items-center justify-start min-h-screen bg-gradient-to-b from-[#FFF9E6] to-[#FFEBB2] font-sans overflow-hidden pt-0">
       
+      {/* 배경 데코레이션 레이어 (Z-index 0) */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
+        {/* 중앙 스테이지 하이라이트 */}
+        <div className="hidden lg:block absolute left-1/2 -translate-x-1/2 w-[800px] h-full bg-white/30 blur-[100px] z-0" />
+        
+        {/* 좌우 부유 장식 요소 (Blobs) */}
+        <div className="absolute -left-20 top-1/4 w-[40rem] h-[40rem] bg-[#FFD700]/10 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute -right-20 top-1/3 w-[35rem] h-[35rem] bg-[#FF8080]/10 rounded-full blur-[110px]" />
+        <div className="absolute left-1/10 bottom-0 w-[30rem] h-[30rem] bg-[#87CEEB]/10 rounded-full blur-[90px]" />
+      </div>
+
       {/* PC 전용 상단 타이틀 바 */}
       <div className="hidden lg:flex w-full bg-[#FFEBB2] border-b-4 border-[#FFD700]/30 py-4 mb-6 justify-center items-center z-10 shadow-sm">
         <h1 className="text-5xl font-black text-[#FF8533] drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)] tracking-tighter">SUIKA GAME</h1>
