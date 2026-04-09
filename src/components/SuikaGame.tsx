@@ -700,7 +700,7 @@ const SuikaGame: React.FC = () => {
       {/* 통합 게임 스테이지 (점수, 게임판, NEXT/진화 등 모든 요소를 포함한 영역) */}
       <div 
         ref={containerRef} 
-        className={`relative flex flex-col lg:flex-row gap-8 lg:gap-14 items-center lg:items-center z-10 p-8 lg:p-16 bg-white/50 backdrop-blur-xl rounded-[4rem] border-[1px] border-white/80 shadow-[0_40px_120px_-20px_rgba(0,0,0,0.25)] transform -translate-y-4 ${isShake ? 'animate-shake' : ''}`}
+        className={`relative flex flex-col lg:flex-row gap-4 lg:gap-14 items-center lg:items-center z-10 p-4 lg:p-16 bg-white/50 backdrop-blur-xl rounded-[3rem] lg:rounded-[4rem] border-[1px] border-white/80 shadow-[0_40px_120px_-20px_rgba(0,0,0,0.25)] lg:transform lg:-translate-y-4 ${isShake ? 'animate-shake' : ''}`}
       >
         
         {/* PC 전용 좌측 사이드바 (점수판) - 통합 프레임 내부에 맞춰 스타일 조정 */}
