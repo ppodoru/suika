@@ -702,14 +702,7 @@ const SuikaGame: React.FC = () => {
         <h1 className="text-5xl font-black text-[#FF8533] drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)] tracking-tighter">SUIKA GAME</h1>
       </div>
 
-      {/* 모바일 전용 상단 타이틀 바 */}
-      <div className="lg:hidden w-full pt-6 pb-2 text-center z-10">
-        <h1 className="text-3xl font-black text-[#FF8533] drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)] tracking-tighter">
-          SUIKA GAME
-        </h1>
-      </div>
-
-      {/* 통합 게임 스테이지 (점수, 게임판, NEXT/진화 등 모든 요소를 포함한 영역) */}
+      {/* 통합 게임 스테이지 (점수, 게임판, NEXT/진화 등 모든 요소를 포함 한 영역) */}
       <div 
         ref={containerRef} 
         onMouseMove={handleMove}
@@ -738,6 +731,10 @@ const SuikaGame: React.FC = () => {
             <div className="lg:hidden">
               <div className="absolute top-4 left-4 px-4 py-1 bg-[#FF8080] text-white rounded-full shadow-lg border-2 border-white font-bold text-lg z-0 whitespace-nowrap">
                 SCORE: {score}
+              </div>
+              {/* 점수판 사이 빈 공간을 활용한 타이틀 */}
+              <div className="absolute top-[22px] left-1/2 -translate-x-1/2 text-[#FF8533] font-black text-xs drop-shadow-[0_1px_1px_rgba(255,255,255,1)] z-0 whitespace-nowrap tracking-wider opacity-90">
+                SUIKA GAME
               </div>
               <div className="absolute top-4 right-4 px-4 py-1 bg-[#FFB84D] text-white rounded-full shadow-lg border-2 border-white font-bold text-lg z-0 whitespace-nowrap">
                 BEST: {highScore}
