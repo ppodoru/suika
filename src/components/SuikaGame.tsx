@@ -13,6 +13,13 @@ interface FruitData {
   imgH: number;
 }
 
+interface VisualEffect {
+  id: number;
+  x: number;
+  y: number;
+  color: string;
+}
+
 const FRUIT_TYPES: FruitData[] = [
   { id: 1, name: '체리', radius: 14, color: '#FF3333', borderColor: '#CC0000', imageFile: '1_cherry.png?v=2', imgW: 513, imgH: 684 },
   { id: 2, name: '딸기', radius: 20, color: '#FF5E7E', borderColor: '#D94361', imageFile: '2_strawberry.png?v=2', imgW: 504, imgH: 618 },
@@ -44,6 +51,7 @@ const SuikaGame: React.FC = () => {
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [isShake, setIsShake] = useState(false);
   const [suikaPop, setSuikaPop] = useState<{ x: number, y: number } | null>(null);
+  const [mergeEffects, setMergeEffects] = useState<VisualEffect[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const bgmBufferRef = useRef<AudioBuffer | null>(null);
@@ -117,6 +125,14 @@ const SuikaGame: React.FC = () => {
     } catch (e) {
       console.error('Pop sound failed', e);
     }
+  };
+
+  const addMergeEffect = (x: number, y: number, color: string) => {
+    const id = Date.now() + Math.random();
+    setMergeEffects(prev => [...prev, { id, x, y, color }]);
+    setTimeout(() => {
+      setMergeEffects(prev => prev.filter(e => e.id !== id));
+    }, 600);
   };
 
   useEffect(() => {
@@ -285,6 +301,30 @@ const SuikaGame: React.FC = () => {
       render.canvas.style.pointerEvents = 'none';
       render.canvas.style.backgroundColor = 'transparent';
     }
+
+    const spawnParticles = (x: number, y: number, color: string, count: number) => {
+      const particles: Matter.Body[] = [];
+      for (let i = 0; i < count; i++) {
+        const p = Matter.Bodies.circle(x, y, Math.random() * 2 + 1, {
+          friction: 0.1,
+          restitution: 0.8,
+          label: 'particle',
+          collisionFilter: { group: -1, mask: 0 },
+          render: { fillStyle: color }
+        });
+        const forceMagnitude = (0.003 + Math.random() * 0.005) * p.mass;
+        const angle = Math.random() * Math.PI * 2;
+        Matter.Body.applyForce(p, p.position, {
+          x: Math.cos(angle) * forceMagnitude,
+          y: Math.sin(angle) * forceMagnitude
+        });
+        particles.push(p);
+      }
+      Matter.Composite.add(engine.world, particles);
+      setTimeout(() => {
+        Matter.Composite.remove(engine.world, particles);
+      }, 800);
+    };
 
     const glassOptions = {
       isStatic: true,
@@ -457,6 +497,14 @@ const SuikaGame: React.FC = () => {
           
           playMergeSound(typeIndex);
           
+          const midX = (bodyA.position.x + bodyB.position.x) / 2;
+          const midY = (bodyA.position.y + bodyB.position.y) / 2;
+          const fruitColor = FRUIT_TYPES[typeIndex].color;
+          
+          // 공통 합성 효과 (파티클 + 링)
+          spawnParticles(midX, midY, fruitColor, 8 + typeIndex * 2);
+          addMergeEffect(midX, midY, fruitColor);
+
           if (typeNum === 11) {
             console.log('%c🍉 SUIKA MERGE SUCCESS!!! 🍉', 'color: #ff0000; font-size: 20px; font-weight: bold;');
             playSuikaSpecialSound();
@@ -466,37 +514,11 @@ const SuikaGame: React.FC = () => {
             setTimeout(() => setIsShake(false), 400);
 
             // 부유 텍스트 위치 설정
-            setSuikaPop({ x: bodyA.position.x, y: bodyA.position.y });
+            setSuikaPop({ x: midX, y: midY });
             setTimeout(() => setSuikaPop(null), 1500);
 
-            // 수박 씨 파티클 버스트 (Matter.js)
-            const particles: Matter.Body[] = [];
-            for (let i = 0; i < 20; i++) {
-              const p = Matter.Bodies.circle(
-                (bodyA.position.x + bodyB.position.x) / 2,
-                (bodyA.position.y + bodyB.position.y) / 2,
-                Math.random() * 3 + 2,
-                {
-                  friction: 0.1,
-                  restitution: 0.8,
-                  label: 'particle',
-                  collisionFilter: { group: -1, mask: 0 }, // 다른 물체와 충돌 안함
-                  render: { fillStyle: '#331100' } // 수박 씨 색상
-                }
-              );
-              const forceMagnitude = 0.01 * p.mass;
-              const angle = Math.random() * Math.PI * 2;
-              Matter.Body.applyForce(p, p.position, {
-                x: Math.cos(angle) * forceMagnitude,
-                y: Math.sin(angle) * forceMagnitude
-              });
-              particles.push(p);
-            }
-            Matter.Composite.add(engine.world, particles);
-            // 2초 뒤 파티클 제거
-            setTimeout(() => {
-              Matter.Composite.remove(engine.world, particles);
-            }, 2000);
+            // 수박 전용 추가 파티클 (씨앗 느낌)
+            spawnParticles(midX, midY, '#331100', 20);
           }
 
           Matter.Composite.remove(engine.world, [bodyA, bodyB]);
@@ -673,6 +695,23 @@ const SuikaGame: React.FC = () => {
                   🍉 SUIKA!! 🍉
                 </div>
               )}
+
+              {/* 합성 링 효과 오버레이 */}
+              {mergeEffects.map(effect => (
+                <div 
+                  key={effect.id}
+                  className="absolute pointer-events-none z-50 animate-merge-ring"
+                  style={{ 
+                    left: effect.x, 
+                    top: effect.y, 
+                    borderColor: effect.color,
+                    width: 40,
+                    height: 40,
+                    borderRadius: '50%',
+                    borderStyle: 'solid'
+                  }}
+                />
+              ))}
               
               {/* 1. 구름 몸체 (z-10: 가장 뒤) */}
               <div className="absolute top-0 pointer-events-none z-10" style={{ left: `${cloudX}px` }}>
