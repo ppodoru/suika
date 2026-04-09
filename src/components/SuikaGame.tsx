@@ -732,8 +732,8 @@ const SuikaGame: React.FC = () => {
               <div className="absolute top-4 left-4 px-4 py-1 bg-[#FF8080] text-white rounded-full shadow-lg border-2 border-white font-bold text-lg z-0 whitespace-nowrap">
                 SCORE: {score}
               </div>
-              {/* 점수판 사이 빈 공간을 활용한 타이틀 */}
-              <div className="absolute top-[22px] left-1/2 -translate-x-1/2 text-[#FF8533] font-black text-xs drop-shadow-[0_1px_1px_rgba(255,255,255,1)] z-0 whitespace-nowrap tracking-wider opacity-90">
+              {/* 점수판과 동일한 스타일의 타이틀 전광판 */}
+              <div className="absolute top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-[#FFD700] text-white rounded-full shadow-lg border-2 border-white font-black text-lg z-0 whitespace-nowrap tracking-tight">
                 SUIKA GAME
               </div>
               <div className="absolute top-4 right-4 px-4 py-1 bg-[#FFB84D] text-white rounded-full shadow-lg border-2 border-white font-bold text-lg z-0 whitespace-nowrap">
