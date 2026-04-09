@@ -822,6 +822,8 @@ const SuikaGame: React.FC = () => {
               {/* 고리 중앙에 배치된 음소거 버튼 */}
               <button 
                 onClick={(e) => { e.stopPropagation(); setIsMuted(prev => !prev); }}
+                onTouchStart={(e) => e.stopPropagation()}
+                onTouchEnd={(e) => e.stopPropagation()}
                 className="z-20 w-12 h-12 bg-white/90 rounded-full shadow-md border-2 border-[#b2ebf2] hover:bg-[#e0f7fa] transition-all flex items-center justify-center text-xl cursor-pointer"
                 title="음소거 토글"
               >
