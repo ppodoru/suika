@@ -683,14 +683,30 @@ const SuikaGame: React.FC = () => {
       
       {/* 음소거 버튼이 진화의 고리 내부로 이동되었습니다. */}
 
-      <div ref={containerRef} className={`relative flex flex-col lg:flex-row gap-4 lg:gap-8 items-center lg:items-start z-10 p-0 transform -translate-y-2 ${isShake ? 'animate-shake' : ''}`}>
+      <div ref={containerRef} className={`relative flex flex-col lg:flex-row gap-4 lg:gap-16 items-center lg:items-start z-10 p-0 transform -translate-y-2 ${isShake ? 'animate-shake' : ''}`}>
+        
+        {/* PC 전용 좌측 사이드바 (점수판) */}
+        <div className="hidden lg:flex flex-col gap-6 mt-32 w-44 shrink-0">
+          <div className="p-5 bg-white/80 rounded-[2.5rem] shadow-xl border-4 border-[#FF8080] flex flex-col items-center">
+            <div className="text-[#FF8080] font-bold text-sm tracking-widest leading-none mb-2">SCORE</div>
+            <div className="text-4xl font-black text-[#5C4033]">{score}</div>
+          </div>
+          <div className="p-5 bg-white/80 rounded-[2.5rem] shadow-xl border-4 border-[#FFB84D] flex flex-col items-center">
+            <div className="text-[#FFB84D] font-bold text-sm tracking-widest leading-none mb-2">BEST</div>
+            <div className="text-4xl font-black text-[#5C4033]">{highScore}</div>
+          </div>
+        </div>
+
         <div style={{ width: 500 * scale, height: 650 * scale }} className="relative shrink-0">
           <div style={{ transform: `scale(${scale})`, transformOrigin: 'top left', width: 500, height: 650 }} className="absolute top-0 left-0 bg-white/10 rounded-b-[40px]">
-            <div className="absolute top-4 left-4 px-4 py-1 bg-[#FF8080] text-white rounded-full shadow-lg border-2 border-white font-bold text-lg z-0 whitespace-nowrap">
-              SCORE: {score}
-            </div>
-            <div className="absolute top-4 right-4 px-4 py-1 bg-[#FFB84D] text-white rounded-full shadow-lg border-2 border-white font-bold text-lg z-0 whitespace-nowrap">
-              BEST: {highScore}
+            {/* 모바일 전용 상단 점수판 (lg:hidden) */}
+            <div className="lg:hidden">
+              <div className="absolute top-4 left-4 px-4 py-1 bg-[#FF8080] text-white rounded-full shadow-lg border-2 border-white font-bold text-lg z-0 whitespace-nowrap">
+                SCORE: {score}
+              </div>
+              <div className="absolute top-4 right-4 px-4 py-1 bg-[#FFB84D] text-white rounded-full shadow-lg border-2 border-white font-bold text-lg z-0 whitespace-nowrap">
+                BEST: {highScore}
+              </div>
             </div>
             {/* 이벤트 처리용 최상위 컨테이너 */}
             <div onMouseMove={handleMove} onTouchMove={handleMove} onTouchStart={handleMove} onTouchEnd={handleClick} onClick={handleClick} style={{ touchAction: 'none' }} className="relative w-[500px] h-[650px] cursor-none">
@@ -763,7 +779,7 @@ const SuikaGame: React.FC = () => {
             </div>
         </div>
         </div>
-        <div className="flex flex-row lg:flex-col gap-4 lg:gap-6 mt-0 lg:mt-12 w-full max-w-[500px] justify-center lg:justify-start">
+        <div className="flex flex-row lg:flex-col gap-4 lg:gap-6 mt-0 lg:mt-32 w-full max-w-[500px] justify-center lg:justify-start shrink-0">
           <div className="w-40 h-44 p-4 bg-white/80 rounded-3xl shadow-xl border-4 border-[#FFD700] flex flex-col items-center justify-between shrink-0">
             <div className="text-[#B38B00] font-bold text-sm">NEXT</div>
             <div className="flex-1 flex items-center justify-center pt-2">
