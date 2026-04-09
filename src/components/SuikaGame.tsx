@@ -705,7 +705,12 @@ const SuikaGame: React.FC = () => {
       {/* 통합 게임 스테이지 (점수, 게임판, NEXT/진화 등 모든 요소를 포함한 영역) */}
       <div 
         ref={containerRef} 
-        className={`relative flex flex-col lg:flex-row gap-4 lg:gap-14 items-center lg:items-center z-10 pt-0 pb-4 px-4 lg:p-16 bg-white/50 backdrop-blur-xl rounded-[3rem] lg:rounded-[4rem] border-[1px] border-white/80 shadow-[0_40px_120px_-20px_rgba(0,0,0,0.25)] lg:transform lg:-translate-y-4 ${isShake ? 'animate-shake' : ''}`}
+        onMouseMove={handleMove}
+        onTouchMove={handleMove}
+        onTouchStart={handleMove}
+        onTouchEnd={handleClick}
+        onClick={handleClick}
+        className={`relative flex flex-col lg:flex-row gap-4 lg:gap-14 items-center lg:items-center z-10 pt-0 pb-4 px-4 lg:p-16 bg-white/50 backdrop-blur-xl rounded-[3rem] lg:rounded-[4rem] border-[1px] border-white/80 shadow-[0_40px_120px_-20px_rgba(0,0,0,0.25)] lg:transform lg:-translate-y-4 touch-none cursor-none ${isShake ? 'animate-shake' : ''}`}
       >
         
         {/* PC 전용 좌측 사이드바 (점수판) - 통합 프레임 내부에 맞춰 스타일 조정 */}
@@ -731,8 +736,8 @@ const SuikaGame: React.FC = () => {
                 BEST: {highScore}
               </div>
             </div>
-            {/* 이벤트 처리용 최상위 컨테이너 */}
-            <div onMouseMove={handleMove} onTouchMove={handleMove} onTouchStart={handleMove} onTouchEnd={handleClick} onClick={handleClick} style={{ touchAction: 'none' }} className="relative w-[500px] h-[650px] cursor-none">
+            {/* 이벤트 처리용 최상위 컨테이너 (이전에는 이곳에 핸들러가 있었으나 이제 부모 컨테이너가 처리함) */}
+            <div className="relative w-[500px] h-[650px] pointer-events-none">
               
               {/* 수박 합치기 부유 텍스트 (화면 정중앙 고정) */}
               {suikaPop && (
