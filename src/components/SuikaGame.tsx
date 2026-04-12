@@ -30,7 +30,7 @@ const FRUIT_TYPES: FruitData[] = [
   { id: 6, name: '사과', radius: 53, color: '#FF4D4D', borderColor: '#CC3333', imageFile: '6_apple.png?v=2', imgW: 560, imgH: 628 },
   { id: 7, name: '배', radius: 61, color: '#FFE162', borderColor: '#D9BC41', imageFile: '7_pear.png?v=2', imgW: 620, imgH: 769 },
   { id: 8, name: '복숭아', radius: 74, color: '#FFADAD', borderColor: '#D98A8A', imageFile: '8_peach.png?v=2', imgW: 530, imgH: 594 },
-  { id: 9, name: '파인애플', radius: 88, color: '#FFEC33', borderColor: '#D9C81A', imageFile: '9_pineapple_round.png', imgW: 612, imgH: 789 },
+  { id: 9, name: '파인애플', radius: 88, color: '#FFEC33', borderColor: '#D9C81A', imageFile: '9_pineapple_perfect_round.png', imgW: 722, imgH: 860 },
   { id: 10, name: '멜론', radius: 107, color: '#B2FF66', borderColor: '#8ACC4D', imageFile: '10_melon.png?v=2', imgW: 592, imgH: 690 },
   { id: 11, name: '수박', radius: 123, color: '#2DB400', borderColor: '#248F00', imageFile: '11_watermelon.png?v=2', imgW: 586, imgH: 681 },
 ];
