@@ -631,8 +631,8 @@ const SuikaGame: React.FC = () => {
     const options: any = {
       label: `fruit_${index + 1}`,
       restitution: 0,
-      friction: 0.07,
-      frictionStatic: 0,
+      friction: 0.12,
+      frictionStatic: 0.12,
       frictionAir: 0.01,
       angle: 0,
       angularVelocity: 0,
