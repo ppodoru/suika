@@ -288,7 +288,7 @@ const SuikaGame: React.FC = () => {
 
     const engine = Matter.Engine.create();
     engineRef.current = engine;
-    engine.gravity.y = 1.5;
+    engine.gravity.y = 2.0;
     engine.gravity.x = 0; // 수평 중력 편향 제거
     // 물리 엔진 정밀도 조정 (과도한 반복은 오히려 편향성 유발 가능)
     engine.positionIterations = 10;
