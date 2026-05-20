@@ -539,6 +539,36 @@ const SuikaGame: React.FC = () => {
             spawnParticles(midX, midY, '#331100', 20);
           }
 
+          // 💥 주변 과일들에게 합체 반동(Pop Force) 가하기
+          const bodies = Matter.Composite.allBodies(engine.world);
+          const maxRadius = 180; // 척력 적용 범위
+          
+          bodies.forEach((body) => {
+            // 다른 과일 바디들에 대해서만 척력 적용
+            if (body.label.startsWith('fruit_') && body.id !== bodyA.id && body.id !== bodyB.id) {
+              const dx = body.position.x - midX;
+              const dy = body.position.y - midY;
+              const dist = Math.sqrt(dx * dx + dy * dy);
+              
+              if (dist < maxRadius && dist > 0) {
+                // 거리 감쇄형 척력 계산 (병합된 과일 종류 번호인 typeNum이 높을수록 강함)
+                const baseForce = 0.001 * typeNum;
+                const factor = 1 - (dist / maxRadius);
+                let forceMagnitude = baseForce * factor;
+                
+                // 극단적인 솟구침으로 인한 벽 뚫림 및 비현실적 오버 방지 (제한 0.015)
+                if (forceMagnitude > 0.015) {
+                  forceMagnitude = 0.015;
+                }
+                
+                const forceX = (dx / dist) * forceMagnitude;
+                const forceY = (dy / dist) * forceMagnitude * 0.8; // 수직 솟구침 충격은 살짝 제어
+                
+                Matter.Body.applyForce(body, body.position, { x: forceX, y: forceY });
+              }
+            }
+          });
+
           Matter.Composite.remove(engine.world, [bodyA, bodyB]);
           if (typeNum < 11) {
             createFruit((bodyA.position.x + bodyB.position.x) / 2, (bodyA.position.y + bodyB.position.y) / 2, typeNum, engine.world, true);
@@ -630,15 +660,16 @@ const SuikaGame: React.FC = () => {
 
     const options: any = {
       label: `fruit_${index + 1}`,
-      restitution: 0,
-      friction: 0.12,
-      frictionStatic: 0.12,
+      restitution: 0.15, // 원작 고증: 쫀득한 탄성 부여
+      friction: 0.05, // 원작 고증: 낮은 마찰력으로 굴러가기 원활하게 조정
+      frictionStatic: 0.05,
       frictionAir: 0.01,
       angle: 0,
       angularVelocity: 0,
       velocity: { x: 0, y: 0 },
       slop: 0.05,
-      mass: 2.5,
+      mass: 1.0, // 질량 동일의 법칙 적용
+      inertia: 300, // 회전 관성 통일
       isNew: !isMerge,
       render: {
         sprite: {
@@ -649,7 +680,13 @@ const SuikaGame: React.FC = () => {
       }
     };
     const fruit = Matter.Bodies.circle(x, y, type.radius, options);
-    if (isMerge) Matter.Body.applyForce(fruit, fruit.position, { x: 0, y: -0.02 });
+    
+    // Matter.js는 Bodies.circle 생성 시 내부에서 density/radius 기준으로 mass/inertia를 덮어쓰므로,
+    // 생성 후에 한 번 더 확실하게 mass와 inertia를 명시적으로 세팅해 줍니다.
+    Matter.Body.setMass(fruit, 1.0);
+    Matter.Body.setInertia(fruit, 300);
+
+    if (isMerge) Matter.Body.applyForce(fruit, fruit.position, { x: 0, y: -0.01 }); // 합체 시 본체 자체의 과도한 솟구침 완화
     Matter.Composite.add(world, fruit);
     return fruit;
   };
